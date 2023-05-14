@@ -7,7 +7,7 @@
         "strict": true,
         "skipLibCheck": true,
         "watch": false,
-        "outDir": "js"
+        "outDir": "dist"
     },
     "include": ["./**/*.ts"]
 }
