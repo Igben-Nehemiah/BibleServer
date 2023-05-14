@@ -9,17 +9,20 @@
     "scripts": {
         "dev": "nodemon",
         "build": "tsc",
-        "start": "node dist/server.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "build:graphql": "tsc && copyfiles -u 1 src/schema.graphql dist",
+        "start": "node dist/src/server.js",
+        "start-graphql": "node dist/src/graphqlServer.js"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
         "@types/mongoose": "^5.11.97",
+        "apollo-server-express": "^3.12.0",
         "dotenv": "^16.0.1",
         "express": "^4.18.1",
         "express-async-errors": "^3.1.1",
+        "graphql": "^16.6.0", 
         "mongoose": "^6.4.6"
     },
     "devDependencies": {
@@ -27,6 +30,6 @@
         "@types/node": "^17.0.35",
         "nodemon": "^2.0.16",
         "ts-node": "^10.8.0",
-        "typescript": "^4.7.2"
+        "typescript": "^4.9.5"
     }
 }
