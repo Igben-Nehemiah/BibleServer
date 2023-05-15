@@ -9,7 +9,7 @@ const app = express();
 
 const source = "{ hello }";
 
-graphql({ BookSchema, source})
+graphql({schema: BookSchema, source})
   .then(result => {
     console.log(result);
 })
