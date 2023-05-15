@@ -1,5 +1,11 @@
-type {
-    hello: String
+type Book {
+    abbrev: String,
+    name: String,
+    chapters: [[String]]
+}
+
+type Query {
+    books: [Book]
 }
 
 schema {
