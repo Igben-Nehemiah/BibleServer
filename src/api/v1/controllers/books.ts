@@ -1,5 +1,5 @@
-import Book from "../models/Book";
 import { Request, Response } from "express";
+import BookModel from "../books/models/book.model";
 
 const getAllBooks = async (req: Request, res: Response) => {
     const { name } = req.query;
@@ -15,7 +15,7 @@ const getAllBooks = async (req: Request, res: Response) => {
         queryObject.name = { $regex: name, $options: "i" };
     }
 
-    const books = await Book.find(queryObject);
+    const books = await BookModel.find(queryObject);
 
     res.status(200).json({ books });
 };
