@@ -7,24 +7,29 @@ class BaseRepository<T>
     constructor(public readonly model: mongoose.Model<T & mongoose.Document>) {
     } 
    
-    add(item: T): Promise<void> {
+    async add(item: T): Promise<void> {
         const newItem = new this.model(item);
-        newItem.save();
-        return Promise.resolve();
+        await newItem.save();
     }
     
-    remove(item: T): Promise<boolean> {
-        throw new Error();
+    // Rework later!!!
+    async remove(item: T): Promise<boolean> {
+        return await this.model.remove(item).exec();
     };
 
-    getAll(): Promise<T[]> {
-        throw new Error();
+    async getAll(): Promise<T[]> {
+        const result = await this.model.find()
+            .lean();
+
+        return result as T[];
     }
 
     async getById(id: string | number): Promise<T> {
-        const result = await this.model.findById(id).exec();
-        var t = result?.toObject;
-        throw new Error();
+        const result = await this.model.findById(id);
+
+        if(!result) throw new Error("Object not found!");
+
+        return result as T;
     }
 };
 
