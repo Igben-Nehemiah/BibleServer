@@ -14,7 +14,7 @@ class BooksController extends ControllerBase {
         this.router.get(this.path, this.getAllBooks.bind(this));
     }
 
-    getAllBooks = async (request: express.Request, response: express.Response) => {
+    private getAllBooks = async (request: express.Request, response: express.Response) => {
         const result = await this.booksService.getAllBooks();
         
         if (result.isSuccess){
@@ -23,7 +23,7 @@ class BooksController extends ControllerBase {
         response.send("");
     }
 
-    getBook = async (request: express.Request, response: express.Response) => {
+    private getBook = async (request: express.Request, response: express.Response) => {
         const { name } : { name?: string } = request.query;
 
         throwIfNullOrUndefined(name);
