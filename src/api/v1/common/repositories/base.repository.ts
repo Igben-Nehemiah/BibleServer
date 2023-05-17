@@ -1,11 +1,12 @@
 import * as mongoose from "mongoose";
 import { IBaseRepository } from "../interfaces";
 
-class BaseRepository<T> implements IBaseRepository<T> {
+class BaseRepository<T>
+    implements IBaseRepository<T> {
 
-    constructor(public model: mongoose.Model<T>) {
-    }
-
+    constructor(public readonly model: mongoose.Model<T & mongoose.Document>) {
+    } 
+   
     add(item: T): Promise<void> {
         const newItem = new this.model(item);
         newItem.save();
@@ -20,7 +21,9 @@ class BaseRepository<T> implements IBaseRepository<T> {
         throw new Error();
     }
 
-    getById(id: string | number): Promise<T> {
+    async getById(id: string | number): Promise<T> {
+        const result = await this.model.findById(id).exec();
+        var t = result?.toObject;
         throw new Error();
     }
 };
