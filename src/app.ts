@@ -1,7 +1,7 @@
 import express from "express";
 import * as bodyParser from "body-parser";
-import IController from "./api/v1/interfaces/controller.interface";
 import mongoose from "mongoose";
+import IController from "./api/v1/common/interfaces/controller.interface";
 
 class App {
     public app: express.Application;
