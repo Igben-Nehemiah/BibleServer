@@ -14,7 +14,16 @@ class BooksService {
             return Promise.resolve(new SuccessResult(books));
         }
         catch(e: unknown) {
-            return Promise.resolve(new FailureResult(["Failed to get books!"]))
+            return Promise.resolve(new FailureResult(["Failed to get books!"]));
+        }
+    }
+
+    async getBookByName(name: string): Promise<Result<IBook>> {
+        try {
+            const book = await this.booksRepository.getBookByName(name);
+            return Promise.resolve(new SuccessResult(book));
+        }catch(e: unknown){
+            return Promise.resolve(new FailureResult(["Failed to get book"]));
         }
     }
 }
