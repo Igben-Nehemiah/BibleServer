@@ -2,6 +2,7 @@ import express from "express";
 import * as bodyParser from "body-parser";
 import mongoose from "mongoose";
 import IController from "./api/v1/common/interfaces/controller.interface";
+import { errorHandlerMiddleware } from "./api/v1/middlewares";
 
 class App {
     public app: express.Application;
@@ -15,6 +16,7 @@ class App {
         this.connectToDatabase();
         this.initialiseMiddlewares();
         this.initialiseControllers(controllers);
+        this.intialiseErrorHandling();
     }
 
     public listen() {
@@ -37,6 +39,10 @@ class App {
         const { MONGO_URI } = process.env;
 
         mongoose.connect(MONGO_URI || "");
+    }
+
+    private intialiseErrorHandling() {
+        this.app.use(errorHandlerMiddleware);
     }
 }
 
