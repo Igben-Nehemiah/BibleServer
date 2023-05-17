@@ -10,12 +10,12 @@ class BooksRepository
         super(model)
     }
 
-    getAllBooks(): IBook[]{
-        throw new Error();
-    };
+    async getBookByName(name: string): Promise<IBook>{
+        const book = await this.model.findOne({name});
+        
+        if (!book) throw new Error(`${name} not found!`);
 
-    getBookByName(name: string): IBook{
-        throw new Error();
+        return Promise.resolve(book as IBook);
     }
 }
 
