@@ -1,3 +1,5 @@
+import { IEntity } from "./entity.interface";
+
 export interface IBaseRepository<T> {
     add: (item: T) => Promise<void>;
     remove: (item: T) => Promise<boolean>;
