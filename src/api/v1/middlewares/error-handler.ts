@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { CustomAPIError } from "../errors/custom-error";
+import { CustomAPIError } from "../common/errors/custom-error";
 
 const errorHandlerMiddleware = (
     err: any,
