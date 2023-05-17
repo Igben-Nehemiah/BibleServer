@@ -1,6 +1,7 @@
 import * as express from "express";
 import ControllerBase from "../../common/controller/base.controller";
 import BooksService from "../services/books.service";
+import throwIfNullOrUndefined from "../../common/guards/nullAndUndefined.guard";
 
 class BooksController extends ControllerBase {
     constructor(private readonly booksService: BooksService) {
@@ -19,8 +20,17 @@ class BooksController extends ControllerBase {
         if (result.isSuccess){
             return response.send({"books": result.data});
         }
-
         response.send("");
+    }
+
+    getBook = async (request: express.Request, response: express.Response) => {
+        const { name } : { name?: string } = request.query;
+
+        throwIfNullOrUndefined(name);
+
+        const result = await this.booksService.getBookByName(name!);
+
+        return result.isSuccess ? result : new Error();
     }
 }
 
