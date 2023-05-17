@@ -2,7 +2,7 @@ class Result<T>{
     public readonly isFailure: boolean;
 
     constructor(
-        public readonly data: T,
+        public readonly data: T | null,
         public readonly isSuccess: boolean,
         public readonly errors: string | string[] | null  = null
         ) {
