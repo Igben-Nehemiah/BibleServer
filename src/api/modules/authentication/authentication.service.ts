@@ -11,6 +11,8 @@ import * as bcrypt from "bcrypt";
 import LoginDto from "./dtos/login.dto";
 import WrongCredentialsException from "./exceptions/wrong-credentials.exception";
 import { HttpException } from "../../common/errors/custom-error";
+import { DataStoredInToken } from "./interfaces/token-data";
+import * as jwt from "jsonwebtoken";
 
 
 class AuthenticationService {
@@ -36,9 +38,9 @@ class AuthenticationService {
             return new SuccessResult(newUser);
             
         }catch(e: unknown){
-            return isInstance(e, Error) ? new FailureResult([(e as Error).message]) 
-                : new FailureResult(["User registration failed"]);
-        }
+            return isInstance(e, Error) ? new FailureResult((e as Error).message) 
+                : new FailureResult("User registration failed");
+        };
     };
 
     public async login(loginDto: LoginDto) : Promise<Result<User>> {
@@ -59,10 +61,30 @@ class AuthenticationService {
 
             return new SuccessResult(user);
         }catch(e: unknown){
-            return isInstance(e, Error) || isInstance(e, HttpException) ? new FailureResult([(e as Error).message]) 
-                : new FailureResult(["User login failed"]);
-        }
+            return isInstance(e, Error) || isInstance(e, HttpException) 
+                ? new FailureResult((e as Error).message) 
+                : new FailureResult("User login failed");
+        };
+    };
+    
+
+    private createToken(user: User){
+        const expiresIn = 3600; // TODO: Read from environment
+        const algorithm = process.env.JWT_ALGORITHM!;
+        const secret = process.env.JWT_SECRET!;
+
+        const dataStoredInToken: DataStoredInToken = {
+            _id: user._id
+        };
+
+        return {
+            expiresIn,
+            token: jwt.sign(dataStoredInToken, secret, {
+                expiresIn
+            })
+        };
     }
+
 }
 
 export default AuthenticationService;
