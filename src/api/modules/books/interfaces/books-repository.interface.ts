@@ -1,5 +1,5 @@
-import { IBook } from "./book.interface";
+import { Book } from "./book.interface";
 
 export interface IBookRepository {
-    getBookByName: (name: string) => Promise<IBook>;
+    getBookByName: (name: string) => Promise<Book>;
 }
