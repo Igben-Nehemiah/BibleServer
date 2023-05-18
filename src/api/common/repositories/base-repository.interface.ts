@@ -1,4 +1,4 @@
-import { IEntity } from "./entity.interface";
+import { IEntity } from "../interfaces/entity.interface";
 
 export interface IBaseRepository<T> {
     add: (item: T) => Promise<T>;

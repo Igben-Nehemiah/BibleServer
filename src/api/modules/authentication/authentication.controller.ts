@@ -1,7 +1,7 @@
 import * as express from "express";
-import IController from "../../common/interfaces/controller.interface";
+import IController from "../../common/controller/controller.interface";
 import AuthenticationService from "./authentication.service";
-import CreateUserDto from "./dtos/createUser.dto";
+import CreateUserDto from "./dtos/create-user.dto";
 import LoginDto from "./dtos/login.dto";
 import { HttpException } from "../../common/errors/custom-error";
 import validationMiddleware from "../../middlewares/validation.middleware";

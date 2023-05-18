@@ -1,2 +1,2 @@
-export * from "./bookNotFound.exception";
-export * from "./chapterNotFound.exception"
+export * from "./book-not-found.exception";
+export * from "./chapter-not-found.exception"
