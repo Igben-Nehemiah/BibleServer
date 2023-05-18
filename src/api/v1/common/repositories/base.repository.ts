@@ -7,9 +7,9 @@ class BaseRepository<T>
     constructor(public readonly model: mongoose.Model<T & mongoose.Document>) {
     } 
    
-    async add(item: T): Promise<void> {
+    async add(item: T): Promise<T> {
         const newItem = new this.model(item);
-        await newItem.save();
+        return (await newItem.save()) as T;
     }
     
     // Rework later!!!
@@ -24,11 +24,8 @@ class BaseRepository<T>
         return result as T[];
     }
 
-    async getById(id: string | number): Promise<T> {
+    async getById(id: string | number): Promise<T | null> {
         const result = await this.model.findById(id);
-
-        if(!result) throw new Error("Object not found!");
-
         return result as T;
     }
 };
