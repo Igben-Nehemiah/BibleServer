@@ -1,7 +1,7 @@
 import express from "express";
 import * as bodyParser from "body-parser";
 import mongoose from "mongoose";
-import IController from "./api/v1/common/interfaces/controller.interface";
+import IController from "./api/common/interfaces/controller.interface";
 import { errorHandlerMiddleware } from "./api/v1/middlewares";
 
 class App {
