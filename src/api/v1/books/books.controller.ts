@@ -1,6 +1,6 @@
 import * as express from "express";
 import ControllerBase from "../common/controller/base.controller";
-import BooksService from "./services/books.service";
+import BooksService from "./books.service";
 import throwIfNullOrUndefined from "../common/guards/nullAndUndefined.guard";
 import BookNotFoundException from "./exceptions/bookNotFound.exception";
 
