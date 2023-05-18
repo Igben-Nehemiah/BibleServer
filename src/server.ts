@@ -1,7 +1,7 @@
-import BooksController from "./api/v1/modules/books/books.controller";
-import BooksService from "./api/v1/modules/books/books.service";
-import BookModel from "./api/v1/modules/books/models/book.model";
-import BooksRepository from "./api/v1/modules/books/repositories/books.repository";
+import BooksController from "./api/modules/books/books.controller";
+import BooksService from "./api/modules/books/books.service";
+import BookModel from "./api/modules/books/models/book.model";
+import BooksRepository from "./api/modules/books/repositories/books.repository";
 import App from "./app";
 import validateEnv from "./utils/validateEnv";
 
