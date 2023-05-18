@@ -1,8 +1,8 @@
 import { isInstance } from "class-validator";
-import Result from "../common/Results/base.result";
-import FailureResult from "../common/Results/failure.result";
-import SuccessResult from "../common/Results/success.result";
-import throwIfNullOrUndefined from "../common/guards/nullAndUndefined.guard";
+import Result from "../../common/Results/base.result";
+import FailureResult from "../../common/Results/failure.result";
+import SuccessResult from "../../common/Results/success.result";
+import throwIfNullOrUndefined from "../../common/guards/nullAndUndefined.guard";
 import CreateUserDto from "./dtos/createUser.dto";
 import UserWithEmailAlreadyExistsException from "./exceptions/userWithEmailAlreadyExists.exception";
 import User from "./interfaces/user.interface";
@@ -10,7 +10,7 @@ import AuthenticationRepository from "./repositories/authentication.repository";
 import * as bcrypt from "bcrypt";
 import LoginDto from "./dtos/login.dto";
 import WrongCredentialsException from "./exceptions/wrongCredentials.exception";
-import { HttpException } from "../common/errors/custom-error";
+import { HttpException } from "../../common/errors/custom-error";
 
 
 class AuthenticationService {

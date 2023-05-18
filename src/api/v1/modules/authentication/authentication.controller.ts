@@ -1,10 +1,10 @@
 import * as express from "express";
-import IController from "../common/interfaces/controller.interface";
+import IController from "../../common/interfaces/controller.interface";
 import AuthenticationService from "./authentication.service";
 import CreateUserDto from "./dtos/createUser.dto";
 import LoginDto from "./dtos/login.dto";
-import { HttpException } from "../common/errors/custom-error";
-import validationMiddleware from "../middlewares/validation.middleware";
+import { HttpException } from "../../common/errors/custom-error";
+import validationMiddleware from "../../middlewares/validation.middleware";
 
 class AuthenticationController implements IController {
     public router = express.Router();

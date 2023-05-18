@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import BaseRepository from "../../common/repositories/base.repository";
+import BaseRepository from "../../../common/repositories/base.repository";
 import User from "../interfaces/user.interface";
 
 

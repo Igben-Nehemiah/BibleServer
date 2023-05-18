@@ -1,4 +1,4 @@
-import { IEntity } from "../../common/interfaces";
+import { IEntity } from "../../../common/interfaces";
 
 export interface IBook extends IEntity {
     abbrev: string;

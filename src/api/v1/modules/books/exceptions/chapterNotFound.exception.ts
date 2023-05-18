@@ -1,4 +1,4 @@
-import { HttpException } from "../../common/errors/custom-error";
+import { HttpException } from "../../../common/errors/custom-error";
 
 class ChapterNotFoundException extends HttpException {
     constructor(bookName: string, chapter: number) {

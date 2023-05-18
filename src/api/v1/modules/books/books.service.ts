@@ -1,6 +1,6 @@
-import Result from "../common/Results/base.result";
-import FailureResult from "../common/Results/failure.result";
-import SuccessResult from "../common/Results/success.result";
+import Result from "../../common/Results/base.result";
+import FailureResult from "../../common/Results/failure.result";
+import SuccessResult from "../../common/Results/success.result";
 import { IBook } from "./interfaces";
 import BooksRepository from "./repositories/books.repository";
 

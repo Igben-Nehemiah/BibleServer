@@ -1,7 +1,7 @@
 import * as express from "express";
-import ControllerBase from "../common/controller/base.controller";
+import ControllerBase from "../../common/controller/base.controller";
 import BooksService from "./books.service";
-import throwIfNullOrUndefined from "../common/guards/nullAndUndefined.guard";
+import throwIfNullOrUndefined from "../../common/guards/nullAndUndefined.guard";
 import BookNotFoundException from "./exceptions/bookNotFound.exception";
 
 class BooksController extends ControllerBase {

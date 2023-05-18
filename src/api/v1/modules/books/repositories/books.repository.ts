@@ -1,4 +1,4 @@
-import BaseRepository from "../../common/repositories/base.repository";
+import BaseRepository from "../../../common/repositories/base.repository";
 import { IBook, IBookRepository as IBooksRepository } from "../interfaces";
 import BookModel from "../models/book.model";
 
