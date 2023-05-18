@@ -11,7 +11,7 @@ import * as bcrypt from "bcrypt";
 import LoginDto from "./dtos/login.dto";
 import WrongCredentialsException from "./exceptions/wrong-credentials.exception";
 import { HttpException } from "../../common/errors/custom-error";
-import { DataStoredInToken } from "./interfaces/token-data";
+import { DataStoredInToken, TokenData } from "./interfaces/token-data";
 import * as jwt from "jsonwebtoken";
 
 
@@ -27,7 +27,7 @@ class AuthenticationService {
 
             if (existingUser) throw new UserWithEmailAlreadyExistsException(createUserDto.email!);
 
-            const hashedPassword = await bcrypt.hash(createUserDto.password!, 5);
+            const hashedPassword = await bcrypt.hash(createUserDto.password!, parseInt(process.env.SALT_ROUNDS!));
 
             const newUser = await this.authRepository.add({
                 ...createUserDto,
@@ -35,6 +35,7 @@ class AuthenticationService {
             });
 
             delete newUser.password;
+            const tokenData = this.createToken(newUser);
             return new SuccessResult(newUser);
             
         }catch(e: unknown){
@@ -68,7 +69,7 @@ class AuthenticationService {
     };
     
 
-    private createToken(user: User){
+    private createToken(user: User): TokenData{
         const expiresIn = 3600; // TODO: Read from environment
         const algorithm = process.env.JWT_ALGORITHM!;
         const secret = process.env.JWT_SECRET!;
@@ -80,7 +81,8 @@ class AuthenticationService {
         return {
             expiresIn,
             token: jwt.sign(dataStoredInToken, secret, {
-                expiresIn
+                expiresIn,
+
             })
         };
     }
