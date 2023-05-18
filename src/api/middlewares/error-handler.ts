@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { HttpException } from "../common/errors/custom-error";
-import FailureResult from "../common/Results/failure.result";
+import FailureResult from "../common/results/failure.result";
 
 const errorHandlerMiddleware = (
     err: any,

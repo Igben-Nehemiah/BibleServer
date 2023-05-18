@@ -1,7 +1,7 @@
 import { isInstance } from "class-validator";
-import Result from "../../common/Results/base.result";
-import FailureResult from "../../common/Results/failure.result";
-import SuccessResult from "../../common/Results/success.result";
+import Result from "../../common/results/base.result";
+import FailureResult from "../../common/results/failure.result";
+import SuccessResult from "../../common/results/success.result";
 import throwIfNullOrUndefined from "../../common/guards/null-and-undefined.guard";
 import CreateUserDto from "./dtos/create-user.dto";
 import UserWithEmailAlreadyExistsException from "./exceptions/user-with-email-already-exists.exception";
