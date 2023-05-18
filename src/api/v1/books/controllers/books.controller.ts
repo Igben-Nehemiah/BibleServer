@@ -2,6 +2,7 @@ import * as express from "express";
 import ControllerBase from "../../common/controller/base.controller";
 import BooksService from "../services/books.service";
 import throwIfNullOrUndefined from "../../common/guards/nullAndUndefined.guard";
+import BookNotFoundException from "../exceptions/bookNotFound.exception";
 
 class BooksController extends ControllerBase {
     constructor(private readonly booksService: BooksService) {
@@ -30,7 +31,7 @@ class BooksController extends ControllerBase {
 
         const result = await this.booksService.getBookByName(name!);
 
-        return result.isSuccess ? result : new Error();
+        return result.isSuccess ? result : new BookNotFoundException(name!);
     }
 }
 
