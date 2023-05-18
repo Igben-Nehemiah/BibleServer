@@ -1,3 +1,0 @@
-@hostName = http://localhost:5000/api/v1/kjv-bible
-
-GET {{hostName}}?name=jude
