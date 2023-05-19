@@ -2,7 +2,8 @@ import express from "express";
 import * as bodyParser from "body-parser";
 import mongoose from "mongoose";
 import IController from "./api/common/controller/controller.interface";
-import { errorHandlerMiddleware } from "./api/v1/middlewares";
+import { errorHandlerMiddleware } from "./api/middlewares";
+import cookieParser from "cookie-parser";
 
 class App {
     public app: express.Application;
@@ -27,6 +28,7 @@ class App {
 
     private initialiseMiddlewares() {
         this.app.use(bodyParser.json());
+        this.app.use(cookieParser());
     }
 
     private initialiseControllers(controllers: IController[]){
