@@ -9,10 +9,10 @@ const errorHandlerMiddleware = (
     next: NextFunction) => {
         
     if (err instanceof HttpException) {
-        res.status(err.statusCode).send(new FailureResult([err.message]));
+        res.status(err.statusCode).send(new FailureResult(err.message));
     }
     res.status(500)
-        .send(new FailureResult(["Something went wrong, please try again"]));
+        .send(new FailureResult("Something went wrong, please try again"));
 };
 
 export default errorHandlerMiddleware;
