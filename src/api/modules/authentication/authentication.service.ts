@@ -18,7 +18,7 @@ import * as jwt from "jsonwebtoken";
 class AuthenticationService {
     constructor(private readonly authRepository: AuthenticationRepository) {};
 
-    public async registerUser(createUserDto: CreateUserDto) : Promise<Result<User>> {
+    public async registerUser(createUserDto: CreateUserDto) : Promise<Result<TokenData>> {
         try {
             throwIfNullOrUndefined(createUserDto.email);
             throwIfNullOrUndefined(createUserDto.password);
@@ -36,7 +36,7 @@ class AuthenticationService {
 
             delete newUser.password;
             const tokenData = this.createToken(newUser);
-            return new SuccessResult(newUser);
+            return new SuccessResult(tokenData);
             
         }catch(e: unknown){
             return isInstance(e, Error) ? new FailureResult((e as Error).message) 
@@ -44,7 +44,7 @@ class AuthenticationService {
         };
     };
 
-    public async login(loginDto: LoginDto) : Promise<Result<User>> {
+    public async login(loginDto: LoginDto) : Promise<Result<TokenData>> {
         try {
 
             throwIfNullOrUndefined(loginDto.email);
@@ -58,9 +58,11 @@ class AuthenticationService {
 
             if (!isPasswordMatching) throw new WrongCredentialsException();
 
+            
             delete user.password;
-
-            return new SuccessResult(user);
+            
+            const tokenData = this.createToken(user);
+            return new SuccessResult(tokenData);
         }catch(e: unknown){
             return isInstance(e, Error) || isInstance(e, HttpException) 
                 ? new FailureResult((e as Error).message) 
