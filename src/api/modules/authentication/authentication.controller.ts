@@ -16,8 +16,9 @@ class AuthenticationController implements IController {
     }
 
     private initialiseRoutes() {
-        this.router.post(this.path + "/login", validationMiddleware(LoginDto), this.logIn);
-        this.router.post(this.path + "/signup", validationMiddleware(CreateUserDto), this.registerUser);
+        this.router.post(`${this.path}/login`, validationMiddleware(LoginDto), this.logIn);
+        this.router.post(`${this.path}/signup`, validationMiddleware(CreateUserDto), this.registerUser);
+        this.router.post(`${this.path}/logout`, this.logout);
     };
 
     private registerUser = async (request: express.Request, 
@@ -50,6 +51,13 @@ class AuthenticationController implements IController {
 
     private createCookie(tokenData: TokenData) : string {
         return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`;
+    };
+
+    private logout = async (request: express.Request, 
+        response: express.Response,
+        next: express.NextFunction) => {
+        
+        response.setHeader("Set-Cookie", ["Authorization=;Max-age=0"]);
     }
 };
 
