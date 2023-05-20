@@ -11,7 +11,8 @@
         "build": "tsc",
         "build:graphql": "tsc && copyfiles -u 1 src/schema.graphql dist",
         "start": "node dist/src/server.js",
-        "start-graphql": "node dist/src/graphqlServer.js"
+        "start-graphql": "node dist/src/graphqlServer.js",
+        "test": "jest"
     },
     "keywords": [],
     "author": "",
