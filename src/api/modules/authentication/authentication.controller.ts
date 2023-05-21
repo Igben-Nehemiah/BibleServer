@@ -6,6 +6,7 @@ import LoginDto from "./dtos/login.dto";
 import { HttpException } from "../../common/errors/custom-error";
 import validationMiddleware from "../../middlewares/validation.middleware";
 import { TokenData } from "./interfaces/token-data";
+import SuccessResult from "../../common/results/success.result";
 
 class AuthenticationController implements IController {
     public router = express.Router();
@@ -28,8 +29,8 @@ class AuthenticationController implements IController {
 
         const result = await this.authService.registerUser(userData);
         if (result.isSuccess){
-            response.setHeader("Set-Cookie", [this.createCookie(result.data!)])
-            return response.status(201).json(result.data);
+            response.setHeader("Set-Cookie", [result.data!.cookie])
+            return response.status(201).json(new SuccessResult(result.data?.user));
         }
         throw new HttpException(result.error || "", 400); // Todo: Look at this implementation later
     };
@@ -43,14 +44,10 @@ class AuthenticationController implements IController {
         const result = await this.authService.login(userData);
 
         if (result.isSuccess) {
-            response.setHeader("Set-Cookie", [this.createCookie(result.data!)])
-            return response.status(200).json(result.data);
+            response.setHeader("Set-Cookie", [result.data!.cookie])
+            return response.status(200).json(new SuccessResult(result.data?.user));
         }
         throw new HttpException(result.error || "", 400);
-    };
-
-    private createCookie(tokenData: TokenData) : string {
-        return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`;
     };
 
     private logout = async (request: express.Request, 
