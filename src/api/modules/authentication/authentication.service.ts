@@ -18,7 +18,8 @@ import * as jwt from "jsonwebtoken";
 class AuthenticationService {
     constructor(private readonly authRepository: AuthenticationRepository) {};
 
-    public async registerUser(createUserDto: CreateUserDto) : Promise<Result<TokenData>> {
+    public async registerUser(createUserDto: CreateUserDto) 
+        : Promise<Result<{cookie: string, user: User}>> {
         try {
             throwIfNullOrUndefined(createUserDto.email);
             throwIfNullOrUndefined(createUserDto.password);
@@ -36,7 +37,10 @@ class AuthenticationService {
 
             delete newUser.password;
             const tokenData = this.createToken(newUser);
-            return new SuccessResult(tokenData);
+            return new SuccessResult({
+                cookie: this.createCookie(tokenData),
+                user: newUser
+            });
             
         }catch(e: unknown){
             return isInstance(e, Error) ? new FailureResult((e as Error).message) 
@@ -44,7 +48,8 @@ class AuthenticationService {
         };
     };
 
-    public async login(loginDto: LoginDto) : Promise<Result<TokenData>> {
+    public async login(loginDto: LoginDto) 
+        : Promise<Result<{cookie: string, user: User}>> {
         try {
 
             throwIfNullOrUndefined(loginDto.email);
@@ -62,7 +67,11 @@ class AuthenticationService {
             delete user.password;
             
             const tokenData = this.createToken(user);
-            return new SuccessResult(tokenData);
+            this.createCookie(tokenData)
+            return new SuccessResult({
+                cookie: this.createCookie(tokenData),
+                user
+            });
         }catch(e: unknown){
             return isInstance(e, Error) || isInstance(e, HttpException) 
                 ? new FailureResult((e as Error).message) 
@@ -89,6 +98,9 @@ class AuthenticationService {
         };
     }
 
+    private createCookie(tokenData: TokenData) : string {
+        return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`;
+    };
 }
 
 export default AuthenticationService;
