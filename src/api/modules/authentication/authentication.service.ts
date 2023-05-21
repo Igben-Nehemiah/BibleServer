@@ -6,17 +6,17 @@ import throwIfNullOrUndefined from "../../common/guards/null-and-undefined.guard
 import CreateUserDto from "./dtos/create-user.dto";
 import UserWithEmailAlreadyExistsException from "./exceptions/user-with-email-already-exists.exception";
 import User from "./interfaces/user.interface";
-import AuthenticationRepository from "./repositories/authentication.repository";
 import * as bcrypt from "bcrypt";
 import LoginDto from "./dtos/login.dto";
 import WrongCredentialsException from "./exceptions/wrong-credentials.exception";
 import { HttpException } from "../../common/errors/custom-error";
 import { DataStoredInToken, TokenData } from "./interfaces/token-data";
 import * as jwt from "jsonwebtoken";
+import IAuthenticationRepository from "./interfaces/authentication-repository.interface";
 
 
 class AuthenticationService {
-    constructor(private readonly authRepository: AuthenticationRepository) {};
+    constructor(private readonly authRepository: IAuthenticationRepository) {};
 
     public async registerUser(createUserDto: CreateUserDto) 
         : Promise<Result<{cookie: string, user: User}>> {
@@ -98,7 +98,7 @@ class AuthenticationService {
         };
     }
 
-    private createCookie(tokenData: TokenData) : string {
+    public createCookie(tokenData: TokenData) : string {
         return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`;
     };
 }
