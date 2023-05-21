@@ -1,6 +1,9 @@
+import FailureResult from "../../../common/results/failure.result";
 import AuthenticationService from "../authentication.service"
+import CreateUserDto from "../dtos/create-user.dto";
 import { TokenData } from "../interfaces";
 import IAuthenticationRepository from "../interfaces/authentication-repository.interface";
+import User from "../interfaces/user.interface";
 
 const authRepository : IAuthenticationRepository = {
     add: jest.fn().mockReturnValue({}),
@@ -15,8 +18,26 @@ const authRepository : IAuthenticationRepository = {
 }
 
 
-describe("The AuthenticationService", () => {
-    const authenticationService = new AuthenticationService(authRepository);
+describe("AuthenticationService", () => {
+    let authenticationService : AuthenticationService;
+    beforeEach(() => {
+        authenticationService = new AuthenticationService(authRepository);
+    });
+
+    describe("When registering a user with an existing email address", () => {
+        const createUserDto : CreateUserDto = {
+            email: "test@test.com",
+            password: "testing"
+        };
+        it("should return a failed result", async () => {
+            const result = await authenticationService.registerUser(createUserDto);
+
+            expect(result)
+                .toEqual<FailureResult<{cookie: string, user: User}>>
+                    (new FailureResult(`${createUserDto.email} has already been used`));
+        });
+    });
+
     describe("When creating a cookie", () => {
         const tokenData: TokenData = {
             token: "",
@@ -26,6 +47,6 @@ describe("The AuthenticationService", () => {
         it("should return a string", () => {
             expect(typeof authenticationService.createCookie(tokenData))
                 .toEqual("string");
-        })
-    })
-})
+        });
+    });
+});
