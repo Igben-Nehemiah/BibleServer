@@ -40,7 +40,9 @@ class App {
     private connectToDatabase() {
         const { MONGO_URI } = process.env;
 
-        mongoose.connect(MONGO_URI || "");
+        mongoose.connect(MONGO_URI || "")
+            .then(re => console.log("Connected successfully!"))
+            .catch(() => console.error("Failed to connect to db"));
     }
 
     private intialiseErrorHandling() {
