@@ -3,7 +3,7 @@ import AuthenticationController from "../authentication.controller";
 import AuthenticationService from "../authentication.service";
 import CreateUserDto from "../dtos/create-user.dto";
 import IAuthenticationRepository from "../interfaces/authentication-repository.interface";
-import * as request from 'supertest';
+import request from 'supertest';
 
 
 const authRepository : IAuthenticationRepository = {
@@ -34,11 +34,11 @@ describe("AuthenticationController", () => {
               const app = new App([
                 authenticationController,
               ], 3030);
-              return request.agent(app)
-                .post(`${authenticationController.path}/register`)
+              return request(app.app)
+                .post(`${authenticationController.path}/signup`)
                 .send(userData)
                 .expect('Set-Cookie', /^Authorization=.+/)
-            })
+            });
         });
     });
 });
