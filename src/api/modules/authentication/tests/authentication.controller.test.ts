@@ -6,6 +6,12 @@ import IAuthenticationRepository from "../interfaces/authentication-repository.i
 import request from 'supertest';
 
 
+jest.mock('mongoose', () => ({
+  connect: jest.fn(() =>
+    Promise.resolve({ connect: jest.fn(), disconnect: jest.fn() })
+  ),
+}));
+
 const authRepository : IAuthenticationRepository = {
     add: jest.fn().mockReturnValue({}),
     findUserByEmail: jest.fn().mockReturnValue({
@@ -30,7 +36,7 @@ describe("AuthenticationController", () => {
 
               const authenticationService = new AuthenticationService(authRepository)
               const authenticationController = new AuthenticationController(authenticationService);
-
+              authenticationController.router
               const app = new App([
                 authenticationController,
               ], 3030);
