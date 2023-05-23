@@ -38,6 +38,9 @@ describe("AuthenticationController", () => {
                 .post(`${authenticationController.path}/signup`)
                 .send(userData)
                 .expect('Set-Cookie', /^Authorization=.+/)
+                .end(function(err, res) {
+                  if (err) throw err;
+                });
             });
         });
     });
