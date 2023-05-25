@@ -1,6 +1,6 @@
-import Result from "../../common/results/base.result";
-import FailureResult from "../../common/results/failure.result";
-import SuccessResult from "../../common/results/success.result";
+import Result from "../../common/responses/base.response";
+import FailureResult from "../../common/responses/failure.response";
+import Ok from "../../common/responses/ok.response";
 import { Book } from "./interfaces";
 import BooksRepository from "./repositories/books.repository";
 
@@ -11,7 +11,7 @@ class BooksService {
     async getAllBooks(): Promise<Result<Book[]>> {
         try {
             const books = await this.booksRepository.getAll();
-            return Promise.resolve(new SuccessResult(books));
+            return Promise.resolve(new Ok(books));
         }
         catch(e: unknown) {
             return Promise.resolve(new FailureResult("Failed to get books!"));
@@ -21,7 +21,7 @@ class BooksService {
     async getBookByName(name: string): Promise<Result<Book>> {
         try {
             const book = await this.booksRepository.getBookByName(name);
-            return new SuccessResult(book);
+            return new Ok(book);
         }catch(e: unknown){
             return new FailureResult("Failed to get book");
         }
