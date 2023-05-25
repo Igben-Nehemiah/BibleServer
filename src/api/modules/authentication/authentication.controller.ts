@@ -5,7 +5,7 @@ import CreateUserDto from "./dtos/create-user.dto";
 import LoginDto from "./dtos/login.dto";
 import { HttpException } from "../../common/errors/custom-error";
 import validationMiddleware from "../../middlewares/validation.middleware";
-import SuccessResult from "../../common/results/success.result";
+import { Ok } from "../../common/responses";
 
 class AuthenticationController implements IController {
     public router = express.Router();
@@ -30,8 +30,8 @@ class AuthenticationController implements IController {
 
         result.match(
             value => {
-                response.setHeader("Set-Cookie", [result.value.cookie])
-                return response.status(201).json(new SuccessResult(result.value.user));
+                response.setHeader("Set-Cookie", [value.cookie])
+                return response.status(201).json(new Ok(value.user, 201));
             },
             error => { throw new HttpException(error.message || "", 400) }
         );
@@ -48,7 +48,7 @@ class AuthenticationController implements IController {
         result.match(
             value => {
                 response.setHeader("Set-Cookie", [result.value.cookie])
-                return response.status(201).json(new SuccessResult(result.value.user));
+                return response.status(200).json(new Ok(result.value.user));
             },
             error => { throw new HttpException(error.message || "", 400) }
         );
