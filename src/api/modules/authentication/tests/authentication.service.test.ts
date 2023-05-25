@@ -1,4 +1,4 @@
-import FailureResult from "../../../common/results/failure.result";
+import { Result } from "@nehemy/result-monad";
 import AuthenticationService from "../authentication.service"
 import CreateUserDto from "../dtos/create-user.dto";
 import { TokenData } from "../interfaces";
@@ -33,8 +33,9 @@ describe("AuthenticationService", () => {
             const result = await authenticationService.registerUser(createUserDto);
 
             expect(result)
-                .toEqual<FailureResult<{cookie: string, user: User}>>
-                    (new FailureResult(`${createUserDto.email} has already been used`));
+                .toEqual<Result<{cookie: string, user: User}>>
+                    (new Result<{cookie: string, user: User}>
+                        (new Error(`${createUserDto.email} has already been used`)));
         });
     });
 
