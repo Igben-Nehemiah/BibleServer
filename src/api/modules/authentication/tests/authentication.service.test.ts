@@ -15,7 +15,7 @@ const authRepository : IAuthenticationRepository = {
     getAll: jest.fn().mockReturnValue({}),
     getById: jest.fn().mockReturnValue({}),
     remove: jest.fn().mockReturnValue({}),
-}
+};
 
 
 describe("AuthenticationService", () => {
