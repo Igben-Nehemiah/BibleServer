@@ -1,8 +1,6 @@
 import { IBaseRepository } from "../../../common/interfaces";
-import User from "./user.interface";
+import { User } from "./user.interface";
 
-interface IAuthenticationRepository extends IBaseRepository<User> {
+export interface IAuthenticationRepository extends IBaseRepository<User> {
     findUserByEmail(email: string) : Promise<User | null>
 };
-
-export default IAuthenticationRepository;
