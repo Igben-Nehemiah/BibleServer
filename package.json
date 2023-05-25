@@ -20,6 +20,7 @@
     "dependencies": {
         "@nehemy/result-monad": "^1.0.1",
         "@types/mongoose": "^5.11.97",
+        "@types/qrcode": "^1.5.0",
         "@types/speakeasy": "^2.0.7",
         "apollo-server-express": "^3.12.0",
         "bcrypt": "^5.1.0",
@@ -33,6 +34,7 @@
         "graphql": "^16.6.0",
         "jsonwebtoken": "^9.0.0",
         "mongoose": "^6.4.6",
+        "qrcode": "^1.5.3",
         "speakeasy": "^2.0.0"
     },
     "devDependencies": {
