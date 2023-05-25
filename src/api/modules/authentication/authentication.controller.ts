@@ -5,7 +5,6 @@ import CreateUserDto from "./dtos/create-user.dto";
 import LoginDto from "./dtos/login.dto";
 import { HttpException } from "../../common/errors/custom-error";
 import validationMiddleware from "../../middlewares/validation.middleware";
-import { TokenData } from "./interfaces/token-data";
 import SuccessResult from "../../common/results/success.result";
 
 class AuthenticationController implements IController {
@@ -28,11 +27,14 @@ class AuthenticationController implements IController {
         const userData: CreateUserDto = request.body;
 
         const result = await this.authService.registerUser(userData);
-        if (result.isSuccess){
-            response.setHeader("Set-Cookie", [result.data!.cookie])
-            return response.status(201).json(new SuccessResult(result.data?.user));
-        }
-        throw new HttpException(result.error || "", 400); // Todo: Look at this implementation later
+
+        result.match(
+            value => {
+                response.setHeader("Set-Cookie", [result.value.cookie])
+                return response.status(201).json(new SuccessResult(result.value.user));
+            },
+            error => { throw new HttpException(error.message || "", 400) }
+        );
     };
     
     private logIn = async (request: express.Request, 
@@ -43,11 +45,13 @@ class AuthenticationController implements IController {
 
         const result = await this.authService.login(userData);
 
-        if (result.isSuccess) {
-            response.setHeader("Set-Cookie", [result.data!.cookie])
-            return response.status(200).json(new SuccessResult(result.data?.user));
-        }
-        throw new HttpException(result.error || "", 400);
+        result.match(
+            value => {
+                response.setHeader("Set-Cookie", [result.value.cookie])
+                return response.status(201).json(new SuccessResult(result.value.user));
+            },
+            error => { throw new HttpException(error.message || "", 400) }
+        );
     };
 
     private logout = async (request: express.Request, 
