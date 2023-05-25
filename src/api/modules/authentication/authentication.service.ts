@@ -1,5 +1,4 @@
 import { isInstance } from "class-validator";
-import throwIfNullOrUndefined from "../../common/guards/null-and-undefined.guard";
 import CreateUserDto from "./dtos/create-user.dto";
 import UserWithEmailAlreadyExistsException from "./exceptions/user-with-email-already-exists.exception";
 import User from "./interfaces/user.interface";
@@ -11,6 +10,7 @@ import { DataStoredInToken, TokenData } from "./interfaces/token-data";
 import * as jwt from "jsonwebtoken";
 import IAuthenticationRepository from "./interfaces/authentication-repository.interface";
 import { Result } from "@nehemy/result-monad";
+import { throwIfNullOrUndefined } from "../../common/guards";
 
 type CookieUser = {
     cookie: string;
