@@ -6,6 +6,8 @@ import LoginDto from "./dtos/login.dto";
 import { HttpException } from "../../common/errors/custom-error";
 import validationMiddleware from "../../middlewares/validation.middleware";
 import { Ok } from "../../common/responses";
+import { RequestWithUser } from "./interfaces";
+import { authenticationMiddleware } from "../../middlewares";
 
 class AuthenticationController implements IController {
     public router = express.Router();
@@ -19,6 +21,7 @@ class AuthenticationController implements IController {
         this.router.post(`${this.path}/login`, validationMiddleware(LoginDto), this.logIn);
         this.router.post(`${this.path}/signup`, validationMiddleware(CreateUserDto), this.registerUser);
         this.router.post(`${this.path}/logout`, this.logout);
+        this.router.post(`${this.path}/2fa/generate`, authenticationMiddleware, this.generateTwoFactorAuthenticationCode);
     };
 
     private registerUser = async (request: express.Request, 
@@ -59,7 +62,23 @@ class AuthenticationController implements IController {
         next: express.NextFunction) => {
         
         response.setHeader("Set-Cookie", ["Authorization=;Max-age=0"]);
-    }
+    };
+
+    private generateTwoFactorAuthenticationCode = async (
+        request: RequestWithUser,
+        response: express.Response,
+        next: express.NextFunction
+      ) => {
+        const user = request.user;
+        const {
+          otpauthUrl,
+          base32,
+        } = this.authService.getTwoFactorAuthenticationCode();
+        await this.user.findByIdAndUpdate(user._id, {
+          twoFactorAuthenticationCode: base32,
+        });
+        this.authService.respondWithQRCode(otpauthUrl, response);
+      };
 };
 
 export default AuthenticationController;

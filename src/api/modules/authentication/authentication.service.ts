@@ -1,16 +1,18 @@
 import { isInstance } from "class-validator";
 import CreateUserDto from "./dtos/create-user.dto";
 import UserWithEmailAlreadyExistsException from "./exceptions/user-with-email-already-exists.exception";
-import User from "./interfaces/user.interface";
 import * as bcrypt from "bcrypt";
 import LoginDto from "./dtos/login.dto";
 import WrongCredentialsException from "./exceptions/wrong-credentials.exception";
 import { HttpException } from "../../common/errors/custom-error";
 import { DataStoredInToken, TokenData } from "./interfaces/token-data";
 import * as jwt from "jsonwebtoken";
-import IAuthenticationRepository from "./interfaces/authentication-repository.interface";
 import { Result } from "@nehemy/result-monad";
 import { throwIfNullOrUndefined } from "../../common/guards";
+import * as speakeasy from "speakeasy";
+import * as QRCode from 'qrcode';
+import { Response } from "express";
+import { IAuthenticationRepository, User } from "./interfaces";
 
 type CookieUser = {
     cookie: string;
@@ -101,6 +103,20 @@ class AuthenticationService {
 
     public createCookie(tokenData: TokenData) : string {
         return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`;
+    };
+
+    getTwoFactorAuthenticationCode() {
+        const secretCode = speakeasy.generateSecret({
+            name: process.env.TWO_FACTOR_AUTHENTICATION_APP_NAME,
+          });
+          return {
+            otpauthUrl : secretCode.otpauth_url,
+            base32: secretCode.base32,
+          };
+    };
+
+    respondWithQRCode(data: string, response: Response) {
+        QRCode.toFileStream(response, data);
     };
 }
 
