@@ -1,11 +1,11 @@
 import { NextFunction, Response } from "express";
 import * as jwt from "jsonwebtoken";
-import { DataStoredInToken } from "../modules/authentication/interfaces";
-import RequestWithUser from "../modules/authentication/interfaces/request-with-user.interface";
+import { DataStoredInToken, RequestWithUser, User } from "../modules/authentication/interfaces";
 import userModel from "../modules/authentication/models/user.model";
 import WrongAuthenticationTokenException from "../modules/authentication/exceptions/wrong-authentication-token.exception";
 
-async function authenticationMiddleware(request: RequestWithUser, 
+export async function authenticationMiddleware(
+    request: RequestWithUser, 
     response: Response, 
     next: NextFunction){
     const cookies = request.cookies;
@@ -33,5 +33,3 @@ async function authenticationMiddleware(request: RequestWithUser,
         next(new WrongAuthenticationTokenException());
     };
 };
-
-export default authenticationMiddleware;
