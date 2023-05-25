@@ -1,7 +1,4 @@
 import { isInstance } from "class-validator";
-import Result from "../../common/results/base.result";
-import FailureResult from "../../common/results/failure.result";
-import SuccessResult from "../../common/results/success.result";
 import throwIfNullOrUndefined from "../../common/guards/null-and-undefined.guard";
 import CreateUserDto from "./dtos/create-user.dto";
 import UserWithEmailAlreadyExistsException from "./exceptions/user-with-email-already-exists.exception";
@@ -13,13 +10,18 @@ import { HttpException } from "../../common/errors/custom-error";
 import { DataStoredInToken, TokenData } from "./interfaces/token-data";
 import * as jwt from "jsonwebtoken";
 import IAuthenticationRepository from "./interfaces/authentication-repository.interface";
+import { Result } from "@nehemy/result-monad";
 
+type CookieUser = {
+    cookie: string;
+    user: User;
+}
 
 class AuthenticationService {
     constructor(private readonly authRepository: IAuthenticationRepository) {};
 
     public async registerUser(createUserDto: CreateUserDto) 
-        : Promise<Result<{cookie: string, user: User}>> {
+        : Promise<Result<CookieUser>> {
         try {
             throwIfNullOrUndefined(createUserDto.email);
             throwIfNullOrUndefined(createUserDto.password);
@@ -37,19 +39,19 @@ class AuthenticationService {
 
             delete newUser.password;
             const tokenData = this.createToken(newUser);
-            return new SuccessResult({
+            return new Result({
                 cookie: this.createCookie(tokenData),
                 user: newUser
             });
             
         }catch(e: unknown){
-            return isInstance(e, Error) ? new FailureResult((e as Error).message) 
-                : new FailureResult("User registration failed");
+            return isInstance(e, Error) ? new Result<CookieUser>(e as Error) 
+                : new Result<CookieUser>(new Error("User registration failed"));
         };
     };
 
     public async login(loginDto: LoginDto) 
-        : Promise<Result<{cookie: string, user: User}>> {
+        : Promise<Result<CookieUser>> {
         try {
 
             throwIfNullOrUndefined(loginDto.email);
@@ -68,18 +70,17 @@ class AuthenticationService {
             
             const tokenData = this.createToken(user);
             this.createCookie(tokenData)
-            return new SuccessResult({
+            return new Result({
                 cookie: this.createCookie(tokenData),
                 user
             });
         }catch(e: unknown){
             return isInstance(e, Error) || isInstance(e, HttpException) 
-                ? new FailureResult((e as Error).message) 
-                : new FailureResult("User login failed");
+                ? new Result<CookieUser>((e as Error)) 
+                : new Result<CookieUser>(new Error("User login failed"));
         };
     };
     
-
     private createToken(user: User): TokenData{
         const expiresIn = 3600; // TODO: Read from environment
         const algorithm = process.env.JWT_ALGORITHM!;
