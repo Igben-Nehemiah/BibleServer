@@ -3,10 +3,11 @@ import BooksService from "./api/modules/books/books.service";
 import BookModel from "./api/modules/books/models/book.model";
 import BooksRepository from "./api/modules/books/repositories/books.repository";
 import App from "./app";
-import validateEnv from "./utils/validateEnv";
-
+import { connectToDatabase } from "./utils/connect-db";
+import validateEnv from "./utils/validate-env";
 
 validateEnv();
+connectToDatabase();
 
 // TODO: This should be done in a DI container or something
 const booksRepository = new BooksRepository(BookModel);
