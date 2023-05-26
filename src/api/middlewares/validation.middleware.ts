@@ -4,7 +4,7 @@ import * as express from "express";
 import { HttpException } from "../common/errors/custom-error";
 
 
-function validationMiddleware(type: any, skipMissingProperties = false): express.RequestHandler {
+export function validationMiddleware(type: any, skipMissingProperties = false): express.RequestHandler {
     return (req: express.Request, res: express.Response, next: express.NextFunction) => {
       validate(plainToInstance(type, req.body), { skipMissingProperties })
         .then((errors: ValidationError[]) => {
@@ -16,6 +16,4 @@ function validationMiddleware(type: any, skipMissingProperties = false): express
           }
         });
     };
-  }
-   
-  export default validationMiddleware;
+};
