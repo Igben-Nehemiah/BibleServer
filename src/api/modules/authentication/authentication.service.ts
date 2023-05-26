@@ -1,18 +1,17 @@
 import { isInstance } from "class-validator";
 import CreateUserDto from "./dtos/create-user.dto";
-import UserWithEmailAlreadyExistsException from "./exceptions/user-with-email-already-exists.exception";
 import * as bcrypt from "bcrypt";
 import LoginDto from "./dtos/login.dto";
-import WrongCredentialsException from "./exceptions/wrong-credentials.exception";
 import { HttpException } from "../../common/errors/custom-error";
 import { DataStoredInToken, TokenData } from "./interfaces/token-data";
 import * as jwt from "jsonwebtoken";
-import { Result } from "@nehemy/result-monad";
 import { throwIfNullOrUndefined } from "../../common/guards";
 import * as speakeasy from "speakeasy";
 import * as QRCode from 'qrcode';
 import { Response } from "express";
 import { IAuthenticationRepository, User } from "./interfaces";
+import { Result } from "@nehemy/result-monad";
+import { UserWithEmailAlreadyExistsException, WrongCredentialsException } from "./exceptions";
 
 type CookieUser = {
     cookie: string;
