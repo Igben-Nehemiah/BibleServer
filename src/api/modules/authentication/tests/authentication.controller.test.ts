@@ -3,9 +3,9 @@ import { IBaseRepository } from "../../../common/interfaces";
 import AuthenticationController from "../authentication.controller";
 import AuthenticationService from "../authentication.service";
 import CreateUserDto from "../dtos/create-user.dto";
-import IAuthenticationRepository from "../interfaces/authentication-repository.interface";
+import { IAuthenticationRepository } from "../interfaces/authentication-repository.interface";
 import request from 'supertest';
-import User from "../interfaces/user.interface";
+import { User } from "../interfaces/user.interface";
 import IController from "../../../common/controller/controller.interface";
 
 const authRepository : IAuthenticationRepository = {
