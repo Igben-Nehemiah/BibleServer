@@ -5,4 +5,5 @@ export interface IBaseRepository<T> {
     remove: (item: T) => Promise<boolean>;
     getAll: () => Promise<T[]>;
     getById: (id: string | number) => Promise<T | null>;
-}
+    findOneAndUpdate: (id: string | number, updatedModel: T) => Promise<T | null>
+};
