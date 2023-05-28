@@ -28,6 +28,11 @@ class BaseRepository<T>
         const result = await this.model.findById(id);
         return result as T;
     }
+
+    async findOneAndUpdate(id: string | number, updatedModel: T): Promise<T | null> {
+        const result = await this.model.findOneAndUpdate({_id: id}, updatedModel as mongoose.UpdateQuery<T>);
+        return result as T;
+    }
 };
 
 export default BaseRepository;
