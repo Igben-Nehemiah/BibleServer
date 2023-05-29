@@ -4,7 +4,7 @@ import { type User, type DataStoredInToken, type RequestWithUser } from '../modu
 import userModel from '../modules/authentication/models/user.model'
 import { AuthenticationTokenMissingException, WrongAuthenticationTokenException } from '../modules/authentication/exceptions'
 
-export function authenticationMiddleware (omitSecondFactor = false): any {
+export function authenticationMiddleware (omitSecondFactor = false) {
   return async (request: RequestWithUser, response: Response, next: NextFunction) => {
     const cookies = request.cookies
     if (cookies?.Authorization !== undefined) {

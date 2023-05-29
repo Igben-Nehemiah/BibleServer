@@ -4,4 +4,4 @@ export interface IBaseRepository<T> {
   getAll: () => Promise<T[]>
   getById: (id: string | number) => Promise<T | null>
   findByIdAndUpdate: (id: string | number, updatedModel: Partial<T>) => Promise<T | null>
-};
+}

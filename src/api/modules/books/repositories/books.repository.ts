@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import BaseRepository from '../../../common/repositories/base.repository'
 import { type Book, type IBookRepository as IBooksRepository } from '../interfaces'
 import type BookModel from '../models/book.model'

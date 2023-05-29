@@ -19,7 +19,7 @@ interface CookieUser {
 }
 
 class AuthenticationService {
-  constructor (private readonly authRepository: IAuthenticationRepository) {};
+  constructor (private readonly authRepository: IAuthenticationRepository) {}
 
   public async registerUser (createUserDto: CreateUserDto): Promise<Result<CookieUser>> {
     try {
@@ -50,8 +50,8 @@ class AuthenticationService {
       return isInstance(e, Error)
         ? new Result<CookieUser>(e as Error)
         : new Result<CookieUser>(new Error('User registration failed'))
-    };
-  };
+    }
+  }
 
   public async login (loginDto: LoginDto): Promise<Result<CookieUser>> {
     try {
@@ -80,8 +80,8 @@ class AuthenticationService {
       return isInstance(e, Error) || isInstance(e, HttpException)
         ? new Result<CookieUser>((e as Error))
         : new Result<CookieUser>(new Error('User login failed'))
-    };
-  };
+    }
+  }
 
   private createToken (user: User): TokenData {
     const expiresIn = 3600 // TODO: Read from environment
@@ -108,7 +108,7 @@ class AuthenticationService {
 
   public createCookie (tokenData: TokenData): string {
     return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`
-  };
+  }
 
   getTwoFactorAuthenticationCode () {
     const secretCode = speakeasy.generateSecret({
@@ -118,11 +118,11 @@ class AuthenticationService {
       otpauthUrl: secretCode.otpauth_url,
       base32: secretCode.base32
     }
-  };
+  }
 
   async respondWithQRCode (data: string, response: Response) {
     await QRCode.toFileStream(response, data)
-  };
+  }
 
   generateTwoFactorAuthenticationCode = async (user: User) => {
     const {

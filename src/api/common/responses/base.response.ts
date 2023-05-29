@@ -10,5 +10,5 @@ export class Response<T> {
   ) {
     this.isSuccessful = code < 400 && code >= 100 && error != null
     this.isNotSuccessful = !this.isSuccessful
-  };
-};
+  }
+}

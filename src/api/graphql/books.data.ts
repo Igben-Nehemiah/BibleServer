@@ -6,6 +6,6 @@ export interface Book {
   chapters: ReadonlyArray<readonly string[]>
 }
 
-export const getBookByName = (name: string) => {
+// export const getBookByName = (name: string) => {
 
-}
+// }

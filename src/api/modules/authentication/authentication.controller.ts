@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import * as express from 'express'
 import type IController from '../../common/controller/controller.interface'
 import type AuthenticationService from './authentication.service'
@@ -21,11 +23,11 @@ class AuthenticationController implements IController {
     this.router.post(`${this.path}/signup`, validationMiddleware(CreateUserDto), this.registerUser as express.RequestHandler)
     this.router.post(`${this.path}/logout`, this.logout as express.RequestHandler)
     this.router.post(`${this.path}/2fa/generate`, authenticationMiddleware, this.generateTwoFactorAuthenticationCode as express.RequestHandler)
-  };
+  }
 
   private readonly registerUser = async (request: express.Request,
     response: express.Response,
-    next: express.NextFunction) => {
+    _next: express.NextFunction) => {
     const userData: CreateUserDto = request.body
 
     const result = await this.authService.registerUser(userData)
@@ -41,7 +43,7 @@ class AuthenticationController implements IController {
 
   private readonly logIn = async (request: express.Request,
     response: express.Response,
-    next: express.NextFunction) => {
+    _next: express.NextFunction) => {
     const userData: LoginDto = request.body
 
     const result = await this.authService.login(userData)
@@ -55,16 +57,16 @@ class AuthenticationController implements IController {
     )
   }
 
-  private readonly logout = async (request: RequestWithUser,
+  private readonly logout = async (_request: RequestWithUser,
     response: express.Response,
-    next: express.NextFunction) => {
+    _next: express.NextFunction) => {
     response.setHeader('Set-Cookie', ['Authorization=;Max-age=0'])
   }
 
   private readonly generateTwoFactorAuthenticationCode = async (
     request: RequestWithUser,
     response: express.Response,
-    next: express.NextFunction
+    _next: express.NextFunction
   ) => {
     const user = request.user
     if (user === undefined) return new NotAuthorised()
@@ -74,6 +76,6 @@ class AuthenticationController implements IController {
     if (otpauthUrl === undefined) return new NotAuthorised()
     await this.authService.respondWithQRCode(otpauthUrl, response)
   }
-};
+}
 
 export default AuthenticationController

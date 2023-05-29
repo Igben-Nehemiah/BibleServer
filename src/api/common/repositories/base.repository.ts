@@ -14,7 +14,7 @@ implements IBaseRepository<T> {
   // Rework later!!!
   async remove (item: T): Promise<boolean> {
     return await this.model.remove(item).exec()
-  };
+  }
 
   async getAll (): Promise<T[]> {
     const result = await this.model.find()
@@ -32,6 +32,6 @@ implements IBaseRepository<T> {
     const result = await this.model.findByIdAndUpdate(id, updatedModel as mongoose.UpdateQuery<T>)
     return result as T
   }
-};
+}
 
 export default BaseRepository

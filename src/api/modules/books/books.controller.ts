@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import type * as express from 'express'
 import ControllerBase from '../../common/controller/base.controller'
 import type BooksService from './books.service'
@@ -14,7 +16,7 @@ class BooksController extends ControllerBase {
     this.router.get(this.path, this.getAllBooks.bind(this) as express.RequestHandler)
   }
 
-  private readonly getAllBooks = async (request: express.Request, response: express.Response) => {
+  private readonly getAllBooks = async (_request: express.Request, response: express.Response) => {
     const result = await this.booksService.getAllBooks()
 
     if (result.isSuccessful) {
@@ -23,7 +25,7 @@ class BooksController extends ControllerBase {
     response.send('')
   }
 
-  private readonly getBook = async (request: express.Request, response: express.Response) => {
+  private readonly getBook = async (request: express.Request, _response: express.Response) => {
     const { name }: { name?: string } = request.query
 
     if (name === undefined ||

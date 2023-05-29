@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { plainToInstance } from 'class-transformer'
 import { type ValidationError, validate } from 'class-validator'
 import type * as express from 'express'
@@ -17,4 +19,4 @@ export function validationMiddleware (type: any, skipMissingProperties = false):
       })
       .catch((err) => { console.log(err) })
   }
-};
+}

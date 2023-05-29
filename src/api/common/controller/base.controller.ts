@@ -1,6 +1,6 @@
 import * as express from 'express'
 
 export default class ControllerBase {
-  public path: string = '/'
+  public path = '/'
   public router = express.Router()
 }

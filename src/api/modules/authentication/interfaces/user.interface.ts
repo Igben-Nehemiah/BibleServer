@@ -5,4 +5,4 @@ export interface User {
   password?: string
   isTwoFactorAuthenticationEnabled?: boolean
   twoFactorAuthenticationCode?: string
-};
+}

@@ -1,12 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { type NextFunction, type Request, type Response } from 'express'
 import { HttpException } from '../common/errors/custom-error'
 import { NotOk } from '../common/responses'
 
 const errorHandlerMiddleware = (
-  err: any,
-  req: Request,
+  err: unknown,
+  _req: Request,
   res: Response,
-  next: NextFunction) => {
+  _next: NextFunction) => {
   if (err instanceof HttpException) {
     res.status(err.statusCode).send(new NotOk(err.statusCode, err.message))
   }
