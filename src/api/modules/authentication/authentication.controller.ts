@@ -47,6 +47,12 @@ class AuthenticationController implements IController {
       authenticationMiddleware(),
       this.turnOnTwoFactorAuthentication
     );
+    this.router.post(
+      `${this.path}/2fa/authenticate`,
+      validationMiddleware(TwoFactorAuthenticationDto),
+      authenticationMiddleware(true),
+      this.secondFactorAuthentication,
+    );
   }
 
   private readonly registerUser = async (
