@@ -45,7 +45,7 @@ class AuthenticationController implements IController {
       `${this.path}/2fa/turn-on`,
       validationMiddleware(TwoFactorAuthenticationDto),
       authenticationMiddleware(),
-      this.turnOnTwoFactorAuthentication,
+      this.turnOnTwoFactorAuthentication
     );
   }
 
@@ -80,11 +80,11 @@ class AuthenticationController implements IController {
 
     result.match(
       value => {
-
         response.setHeader('Set-Cookie', [value.cookie]);
-        if(value.isTwoFactorAuthenticationEnabled){
+        if (value.isTwoFactorAuthenticationEnabled) {
           return response.send({
-            isTwoFactorAuthenticationEnabled: value.isTwoFactorAuthenticationEnabled,
+            isTwoFactorAuthenticationEnabled:
+              value.isTwoFactorAuthenticationEnabled,
           });
         }
         return response.status(200).json(new Ok(value.user));
@@ -109,58 +109,69 @@ class AuthenticationController implements IController {
     _next: express.NextFunction
   ) => {
     const user = request.user;
-    if (user === undefined) return response.status(401).send(new NotAuthorised());
+    if (user === undefined)
+      return response.status(401).send(new NotAuthorised());
     const otpauthUrl =
       await this.authService.generateTwoFactorAuthenticationCode(user);
 
     // TODO: Fix this later
-    if (otpauthUrl === undefined) return response.status(401).send(new NotAuthorised());
+    if (otpauthUrl === undefined)
+      return response.status(401).send(new NotAuthorised());
     await this.authService.respondWithQRCode(otpauthUrl, response);
   };
 
   private readonly turnOnTwoFactorAuthentication = async (
     request: RequestWithUser,
     response: express.Response,
-    next: express.NextFunction,
+    next: express.NextFunction
   ) => {
-    const { twoFactorAuthenticationCode }:{twoFactorAuthenticationCode: string} = request.body;
+    const {
+      twoFactorAuthenticationCode,
+    }: { twoFactorAuthenticationCode: string } = request.body;
     const user = request.user;
 
-    if (user === undefined) throw new Error("User not logged in");
+    if (user === undefined) throw new Error('User not logged in');
 
-    const result = await this.authService.turnOnTwoFactorAuthentication(user, twoFactorAuthenticationCode);
+    const result = await this.authService.turnOnTwoFactorAuthentication(
+      user,
+      twoFactorAuthenticationCode
+    );
 
-    result.match(_ => {
-      response.send(200);
-    },
-    err => next(new WrongAuthenticationTokenException()))
-  }
+    result.match(
+      _ => {
+        response.send(200);
+      },
+      err => next(new WrongAuthenticationTokenException())
+    );
+  };
 
   private secondFactorAuthentication = async (
     request: RequestWithUser,
     response: express.Response,
-    next: express.NextFunction,
+    next: express.NextFunction
   ) => {
     const { twoFactorAuthenticationCode } = request.body;
     const user = request.user;
 
-    if (user === undefined) throw new Error("User not logged in");
+    if (user === undefined) throw new Error('User not logged in');
 
-    const result = await this.authService.secondFactorAuthentication(user, twoFactorAuthenticationCode);
+    const result = await this.authService.secondFactorAuthentication(
+      user,
+      twoFactorAuthenticationCode
+    );
 
     result.match(
       value => {
         response.setHeader('Set-Cookie', [value.cookie]);
         response.send({
-        ...value.user});
+          ...value.user,
+        });
       },
       err => {
         next(err);
       }
-    )
-  }
+    );
+  };
 }
 
-
 export default AuthenticationController;
-
