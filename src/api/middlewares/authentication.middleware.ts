@@ -19,7 +19,7 @@ export function authenticationMiddleware(omitSecondFactor = false) {
   ) => {
     const cookies = request.cookies;
     if (cookies?.Authorization !== undefined) {
-      const secret = process.env.JWT_SECRET ?? '';
+      const secret = process.env.JWT_SECRET ?? '' //TODO: Secret should not be empty;
       try {
         const verificationResponse = jwt.verify(
           cookies.Authorization,
@@ -29,7 +29,7 @@ export function authenticationMiddleware(omitSecondFactor = false) {
         const user = await userModel.findById(id);
         if (user !== null) {
           if (
-            userHasSecondFactorAuthEnabled(
+            userHasSecondFactorAuthEnabledAndIsNotSecondFactorAuthenticated(
               omitSecondFactor,
               user,
               isSecondFactorAuthenticated
@@ -52,7 +52,7 @@ export function authenticationMiddleware(omitSecondFactor = false) {
   };
 }
 
-function userHasSecondFactorAuthEnabled(
+function userHasSecondFactorAuthEnabledAndIsNotSecondFactorAuthenticated(
   omitSecondFactor: boolean,
   user: User,
   isSecondFactorAuthenticated: boolean
