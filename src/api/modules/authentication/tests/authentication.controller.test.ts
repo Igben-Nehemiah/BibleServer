@@ -1,10 +1,10 @@
 import App from '../../../../app';
 import AuthenticationController from '../authentication.controller';
 import AuthenticationService from '../authentication.service';
-import type CreateUserDto from '../dtos/create-user.dto';
 import { type IAuthenticationRepository } from '../interfaces/authentication-repository.interface';
 import request from 'supertest';
 import type IController from '../../../common/controller/controller.interface';
+import { CreateUserDto } from '../dtos';
 
 const authRepository: IAuthenticationRepository = {
   add: jest.fn().mockReturnValue({}),
