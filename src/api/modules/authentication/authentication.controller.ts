@@ -44,7 +44,7 @@ class AuthenticationController implements IController {
     this.router.post(
       `${this.path}/2fa/turn-on`,
       validationMiddleware(TwoFactorAuthenticationDto),
-      authMiddleware(),
+      authenticationMiddleware(),
       this.turnOnTwoFactorAuthentication,
     );
   }
@@ -80,7 +80,13 @@ class AuthenticationController implements IController {
 
     result.match(
       value => {
+
         response.setHeader('Set-Cookie', [value.cookie]);
+        if(value.isTwoFactorAuthenticationEnabled){
+          return response.send({
+            isTwoFactorAuthenticationEnabled: value.isTwoFactorAuthenticationEnabled,
+          });
+        }
         return response.status(200).json(new Ok(value.user));
       },
       error => {
@@ -129,11 +135,32 @@ class AuthenticationController implements IController {
     },
     err => next(new WrongAuthenticationTokenException()))
   }
+
+  private secondFactorAuthentication = async (
+    request: RequestWithUser,
+    response: express.Response,
+    next: express.NextFunction,
+  ) => {
+    const { twoFactorAuthenticationCode } = request.body;
+    const user = request.user;
+
+    if (user === undefined) throw new Error("User not logged in");
+
+    const result = await this.authService.secondFactorAuthentication(user, twoFactorAuthenticationCode);
+
+    result.match(
+      value => {
+        response.setHeader('Set-Cookie', [value.cookie]);
+        response.send({
+        ...value.user});
+      },
+      err => {
+        next(err);
+      }
+    )
+  }
 }
 
 
 export default AuthenticationController;
-function authMiddleware(): import("express-serve-static-core").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>> {
-  throw new Error('Function not implemented.');
-}
 

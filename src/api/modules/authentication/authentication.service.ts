@@ -24,6 +24,9 @@ interface CookieUser {
   user: User;
 }
 
+type ExtendedCookieUser = CookieUser &
+    { isTwoFactorAuthenticationEnabled: boolean };
+
 class AuthenticationService {
   constructor(private readonly authRepository: IAuthenticationRepository) {}
 
@@ -67,43 +70,27 @@ class AuthenticationService {
     }
   }
 
-  public async login(loginDto: LoginDto): Promise<Result<CookieUser>> {
-    try {
-      if (loginDto.email === undefined)
-        throw new Error('Email cannot be empty');
-      if (loginDto.password === undefined)
-        throw new Error('Password cannot be empty');
+  login = async (loginDto: LoginDto): Promise<Result<ExtendedCookieUser>> => {
+    const user = await this.authRepository.findUserByEmail(loginDto.email);
 
-      const user = await this.authRepository.findUserByEmail(loginDto.email);
+    if (user === null) return new Result<ExtendedCookieUser>(new WrongCredentialsException());
 
-      if (user == null) throw new WrongCredentialsException();
+    const isPasswordMatching = await bcrypt.compare(loginDto.password, user.password!);
 
-      if (user.password === undefined)
-        throw new Error('Password cannot be empty');
+    if (!isPasswordMatching) return new Result<ExtendedCookieUser>(new WrongCredentialsException());
 
-      const isPasswordMatching = await bcrypt.compare(
-        loginDto.password,
-        user.password
-      );
+    delete user.password;
+    delete user.twoFactorAuthenticationCode;
+    const tokenData = this.createToken(user);
 
-      if (!isPasswordMatching) throw new WrongCredentialsException();
-
-      delete user.password;
-
-      const tokenData = this.createToken(user);
-      this.createCookie(tokenData);
-      return new Result({
-        cookie: this.createCookie(tokenData),
-        user,
-      });
-    } catch (e: unknown) {
-      return isInstance(e, Error) || isInstance(e, HttpException)
-        ? new Result<CookieUser>(e as Error)
-        : new Result<CookieUser>(new Error('User login failed'));
-    }
+    return  new Result<ExtendedCookieUser>({
+      cookie: this.createCookie(tokenData),
+      isTwoFactorAuthenticationEnabled: user.isTwoFactorAuthenticationEnabled ?? false,
+      user: user,
+    })
   }
 
-  private createToken(user: User): TokenData {
+  private createToken(user: User, isSecondFactorAuthenticated = false): TokenData {
     const expiresIn = 3600; // TODO: Read from environment
     // const algorithm = process.env.JWT_ALGORITHM!
     const secret = process.env.JWT_SECRET;
@@ -114,7 +101,7 @@ class AuthenticationService {
 
     const dataStoredInToken: DataStoredInToken = {
       _id: user._id,
-      isSecondFactorAuthenticated: false, // TODO: fix later
+      isSecondFactorAuthenticated,
     };
 
     return {
@@ -178,6 +165,25 @@ class AuthenticationService {
       return new Result<number>(200);
     } else {
       return new Result<number>(new WrongAuthenticationTokenException());
+    }
+  }
+
+  secondFactorAuthentication = async (user: User, twoFactorAuthenticationCode: string) => {
+    
+    const isCodeValid = await this.verifyTwoFactorAuthenticationCode(
+      twoFactorAuthenticationCode, user,
+    );
+    if (isCodeValid) {
+      const tokenData = this.createToken(user, true);
+
+      delete user.password;
+      delete user.twoFactorAuthenticationCode;
+      return new Result<CookieUser>(
+        {cookie: this.createCookie(tokenData), 
+          user
+        });
+    } else {
+      return new Result<CookieUser>(new WrongAuthenticationTokenException());
     }
   }
 }
