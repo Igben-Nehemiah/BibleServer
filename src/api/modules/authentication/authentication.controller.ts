@@ -56,7 +56,7 @@ class AuthenticationController implements IController {
         );
     };
 
-    private logout = async (request: express.Request, 
+    private logout = async (request: RequestWithUser, 
         response: express.Response,
         next: express.NextFunction) => {
         
@@ -69,14 +69,8 @@ class AuthenticationController implements IController {
         next: express.NextFunction
       ) => {
         const user = request.user;
-        const {
-          otpauthUrl,
-          base32,
-        } = this.authService.getTwoFactorAuthenticationCode();
-        await this.user.findByIdAndUpdate(user._id, {
-          twoFactorAuthenticationCode: base32,
-        });
-        this.authService.respondWithQRCode(otpauthUrl, response);
+        const otpauthUrl = await this.authService.generateTwoFactorAuthenticationCode(user!);
+        this.authService.respondWithQRCode(otpauthUrl!, response);
       };
 };
 
