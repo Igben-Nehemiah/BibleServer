@@ -1,6 +1,6 @@
-import * as express from "express";
+import type * as express from 'express'
 
 export default interface IController {
-    router: express.Router;
-    path: string;
+  router: express.Router
+  path: string
 }

@@ -12,5 +12,8 @@
         "project": "./tsconfig.json"
     },
     "rules": {
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "new-cap": ["error", { "newIsCap": false, "capIsNew": false}],
+        "@typescript-eslint/no-useless-constructor": "off"
     }
 }

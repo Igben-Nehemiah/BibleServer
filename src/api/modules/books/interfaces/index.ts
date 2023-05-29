@@ -1,2 +1,2 @@
-export * from "./book.interface";
-export * from "./books-repository.interface";
+export * from './book.interface'
+export * from './books-repository.interface'

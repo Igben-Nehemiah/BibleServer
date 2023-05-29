@@ -1,7 +1,7 @@
-import { IEntity } from "../../../common/interfaces";
+import { type IEntity } from '../../../common/interfaces'
 
 export interface Book extends IEntity {
-    abbrev: string;
-    chapters: string[][];
-    name: string;
+  abbrev: string
+  chapters: string[][]
+  name: string
 }

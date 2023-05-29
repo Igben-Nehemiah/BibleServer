@@ -1,10 +1,8 @@
 
-
 const resolvers = {
-    Query: {
-      books: () => "Hello world!",
-    },
-  };
-  
-export default resolvers;
-  
+  Query: {
+    books: () => 'Hello world!'
+  }
+}
+
+export default resolvers

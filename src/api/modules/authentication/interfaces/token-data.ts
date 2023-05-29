@@ -1,11 +1,10 @@
 
 export interface TokenData {
-    token: string;
-    expiresIn: number;
+  token: string
+  expiresIn: number
 }
 
-
 export interface DataStoredInToken {
-    _id?: string;
-    isSecondFactorAuthenticated?: boolean;
+  _id: string
+  isSecondFactorAuthenticated: boolean
 }

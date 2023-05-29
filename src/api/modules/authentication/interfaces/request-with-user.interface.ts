@@ -1,6 +1,6 @@
-import { Request } from "express";
-import { User } from "./user.interface";
+import { type Request } from 'express'
+import { type User } from './user.interface'
 
 export interface RequestWithUser extends Request {
-    user?: User;
+  user?: User
 };
