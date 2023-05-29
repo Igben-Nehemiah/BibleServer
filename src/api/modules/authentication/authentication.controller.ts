@@ -3,8 +3,6 @@
 import * as express from 'express';
 import type IController from '../../common/controller/controller.interface';
 import type AuthenticationService from './authentication.service';
-import CreateUserDto from './dtos/create-user.dto';
-import LoginDto from './dtos/login.dto';
 import { HttpException } from '../../common/errors/custom-error';
 import { NotAuthorised, Ok } from '../../common/responses';
 import { type RequestWithUser } from './interfaces';
@@ -12,6 +10,8 @@ import {
   authenticationMiddleware,
   validationMiddleware,
 } from '../../middlewares';
+import { WrongAuthenticationTokenException } from './exceptions';
+import { CreateUserDto, LoginDto, TwoFactorAuthenticationDto } from './dtos';
 
 class AuthenticationController implements IController {
   public router = express.Router();
@@ -40,6 +40,12 @@ class AuthenticationController implements IController {
       `${this.path}/2fa/generate`,
       authenticationMiddleware,
       this.generateTwoFactorAuthenticationCode as express.RequestHandler
+    );
+    this.router.post(
+      `${this.path}/2fa/turn-on`,
+      validationMiddleware(TwoFactorAuthenticationDto),
+      authMiddleware(),
+      this.turnOnTwoFactorAuthentication,
     );
   }
 
@@ -97,14 +103,37 @@ class AuthenticationController implements IController {
     _next: express.NextFunction
   ) => {
     const user = request.user;
-    if (user === undefined) return new NotAuthorised();
+    if (user === undefined) return response.status(401).send(new NotAuthorised());
     const otpauthUrl =
       await this.authService.generateTwoFactorAuthenticationCode(user);
 
     // TODO: Fix this later
-    if (otpauthUrl === undefined) return new NotAuthorised();
+    if (otpauthUrl === undefined) return response.status(401).send(new NotAuthorised());
     await this.authService.respondWithQRCode(otpauthUrl, response);
   };
+
+  private readonly turnOnTwoFactorAuthentication = async (
+    request: RequestWithUser,
+    response: express.Response,
+    next: express.NextFunction,
+  ) => {
+    const { twoFactorAuthenticationCode }:{twoFactorAuthenticationCode: string} = request.body;
+    const user = request.user;
+
+    if (user === undefined) throw new Error("User not logged in");
+
+    const result = await this.authService.turnOnTwoFactorAuthentication(user, twoFactorAuthenticationCode);
+
+    result.match(_ => {
+      response.send(200);
+    },
+    err => next(new WrongAuthenticationTokenException()))
+  }
 }
 
+
 export default AuthenticationController;
+function authMiddleware(): import("express-serve-static-core").RequestHandler<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>> {
+  throw new Error('Function not implemented.');
+}
+

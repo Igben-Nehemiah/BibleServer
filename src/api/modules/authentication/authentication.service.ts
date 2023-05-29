@@ -1,7 +1,5 @@
 import { isInstance } from 'class-validator';
-import type CreateUserDto from './dtos/create-user.dto';
 import * as bcrypt from 'bcrypt';
-import type LoginDto from './dtos/login.dto';
 import { HttpException } from '../../common/errors/custom-error';
 import {
   type DataStoredInToken,
@@ -16,8 +14,10 @@ import { type IAuthenticationRepository, type User } from './interfaces';
 import { Result } from '@nehemy/result-monad';
 import {
   UserWithEmailAlreadyExistsException,
+  WrongAuthenticationTokenException,
   WrongCredentialsException,
 } from './exceptions';
+import { CreateUserDto, LoginDto } from './dtos';
 
 interface CookieUser {
   cookie: string;
@@ -152,6 +152,34 @@ class AuthenticationService {
     });
     return otpauthUrl;
   };
+
+  public verifyTwoFactorAuthenticationCode(twoFactorAuthenticationCode: string, user: User) {
+    if (user.twoFactorAuthenticationCode === undefined) throw new Error("Two factor authentication not set for this user")
+    return speakeasy.totp.verify({
+      secret: user.twoFactorAuthenticationCode,
+      encoding: 'base32',
+      token: twoFactorAuthenticationCode,
+    });
+  }
+
+  turnOnTwoFactorAuthentication = async (user: User, twoFactorAuthenticationCode: string) => {
+    if (user === undefined) throw new Error("User not logged in");
+
+    const isCodeValid = this.verifyTwoFactorAuthenticationCode(
+      twoFactorAuthenticationCode, user,
+    );
+
+    if (user._id === undefined) throw new Error("User not logged in"); //TODO: Correct errors
+
+    if (isCodeValid) {
+      await this.authRepository.findByIdAndUpdate(user._id, {
+        isTwoFactorAuthenticationEnabled: true,
+      });
+      return new Result<number>(200);
+    } else {
+      return new Result<number>(new WrongAuthenticationTokenException());
+    }
+  }
 }
 
 export default AuthenticationService;
