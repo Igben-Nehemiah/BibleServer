@@ -151,7 +151,7 @@ class AuthenticationService {
     return otpauthUrl;
   };
 
-  public verifyTwoFactorAuthenticationCode(
+  private verifyTwoFactorAuthenticationCode(
     twoFactorAuthenticationCode: string,
     user: User
   ) {
