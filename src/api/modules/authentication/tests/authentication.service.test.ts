@@ -1,9 +1,9 @@
 import { Result } from '@nehemy/result-monad';
 import AuthenticationService from '../authentication.service';
-import type CreateUserDto from '../dtos/create-user.dto';
 import { type TokenData } from '../interfaces';
 import { type IAuthenticationRepository } from '../interfaces/authentication-repository.interface';
 import { type User } from '../interfaces/user.interface';
+import { CreateUserDto } from '../dtos';
 
 const authRepository: IAuthenticationRepository = {
   add: jest.fn().mockReturnValue({}),
