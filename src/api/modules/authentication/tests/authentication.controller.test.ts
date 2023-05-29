@@ -12,6 +12,7 @@ const authRepository: IAuthenticationRepository = {
   getById: jest.fn().mockReturnValue({}),
   remove: jest.fn().mockReturnValue({}),
   findUserByEmail: jest.fn().mockReturnValue({}),
+  findByIdAndUpdate: jest.fn().mockReturnValue({}),
 };
 
 describe('AuthenticationController', () => {
@@ -27,6 +28,7 @@ describe('AuthenticationController', () => {
       };
 
       process.env.JWT_SECRET = 'jwt_secret';
+      process.env.SALT_ROUNDS = '10';
 
       authRepository.findUserByEmail = jest.fn().mockReturnValue(null);
 
