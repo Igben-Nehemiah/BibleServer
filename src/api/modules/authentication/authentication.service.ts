@@ -16,7 +16,7 @@ import { UserWithEmailAlreadyExistsException, WrongCredentialsException } from "
 type CookieUser = {
     cookie: string;
     user: User;
-}
+};
 
 class AuthenticationService {
     constructor(private readonly authRepository: IAuthenticationRepository) {};
@@ -117,6 +117,17 @@ class AuthenticationService {
     respondWithQRCode(data: string, response: Response) {
         QRCode.toFileStream(response, data);
     };
+
+    generateTwoFactorAuthenticationCode = async (user: User) => {
+        const {
+          otpauthUrl,
+          base32,
+        } = this.getTwoFactorAuthenticationCode();
+        await this.authRepository.findByIdAndUpdate(user._id!, {
+          twoFactorAuthenticationCode: base32,
+        });
+        return otpauthUrl;
+      };
 }
 
 export default AuthenticationService;
