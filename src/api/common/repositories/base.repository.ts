@@ -29,8 +29,8 @@ class BaseRepository<T>
         return result as T;
     }
 
-    async findOneAndUpdate(id: string | number, updatedModel: T): Promise<T | null> {
-        const result = await this.model.findOneAndUpdate({_id: id}, updatedModel as mongoose.UpdateQuery<T>);
+    async findByIdAndUpdate(id: string | number, updatedModel: Partial<T>): Promise<T | null> {
+        const result = await this.model.findByIdAndUpdate(id, updatedModel as mongoose.UpdateQuery<T>);
         return result as T;
     }
 };
