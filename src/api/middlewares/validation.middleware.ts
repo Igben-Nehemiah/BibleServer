@@ -1,22 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { plainToInstance } from 'class-transformer'
-import { type ValidationError, validate } from 'class-validator'
-import type * as express from 'express'
-import { HttpException } from '../common/errors/custom-error'
+import { plainToInstance } from 'class-transformer';
+import { type ValidationError, validate } from 'class-validator';
+import type * as express from 'express';
+import { HttpException } from '../common/errors/custom-error';
 
-export function validationMiddleware (type: any, skipMissingProperties = false): express.RequestHandler {
-  return (req: express.Request, res: express.Response, next: express.NextFunction) => {
+export function validationMiddleware(
+  type: any,
+  skipMissingProperties = false
+): express.RequestHandler {
+  return (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
     validate(plainToInstance(type, req.body), { skipMissingProperties })
       .then((errors: ValidationError[]) => {
         if (errors.length > 0) {
-          const message = errors.map((error: ValidationError) =>
-            Object.values(error?.constraints ?? '')).join(', ')
-          next(new HttpException(message, 400))
+          const message = errors
+            .map((error: ValidationError) =>
+              Object.values(error?.constraints ?? '')
+            )
+            .join(', ');
+          next(new HttpException(message, 400));
         } else {
-          next()
+          next();
         }
       })
-      .catch((err) => { console.log(err) })
-  }
+      .catch(err => {
+        console.log(err);
+      });
+  };
 }

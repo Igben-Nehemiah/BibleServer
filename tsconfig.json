@@ -1,14 +1,14 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "experimentalDecorators": true,
-        "module": "CommonJS",
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
-        "strict": true,
-        "skipLibCheck": true,
-        "watch": false,
-        "outDir": "dist"
-    },
-    "include": ["./**/*.ts"]
+  "compilerOptions": {
+    "target": "es6",
+    "experimentalDecorators": true,
+    "module": "CommonJS",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "watch": false,
+    "outDir": "dist"
+  },
+  "include": ["./**/*.ts"]
 }

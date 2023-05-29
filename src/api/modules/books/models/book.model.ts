@@ -1,16 +1,16 @@
-import mongoose from 'mongoose'
-import { type Book } from '../interfaces'
+import mongoose from 'mongoose';
+import { type Book } from '../interfaces';
 
 const bookSchema = new mongoose.Schema({
   abbrev: {
-    type: String
+    type: String,
   },
   chapters: {
-    type: [[String]]
+    type: [[String]],
   },
-  name: String
-})
+  name: String,
+});
 
-const BookModel = mongoose.model<Book & mongoose.Document>('Book', bookSchema)
+const BookModel = mongoose.model<Book & mongoose.Document>('Book', bookSchema);
 
-export default BookModel
+export default BookModel;
