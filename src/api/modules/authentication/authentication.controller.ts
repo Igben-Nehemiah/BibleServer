@@ -51,7 +51,7 @@ class AuthenticationController implements IController {
       `${this.path}/2fa/authenticate`,
       validationMiddleware(TwoFactorAuthenticationDto),
       authenticationMiddleware(true),
-      this.secondFactorAuthentication,
+      this.secondFactorAuthentication
     );
   }
 
@@ -67,7 +67,7 @@ class AuthenticationController implements IController {
     result.match(
       value => {
         response.setHeader('Set-Cookie', [value.cookie]);
-        return response.status(201).json(new Ok(value.user, 201));
+        return response.send(new Ok(value.user, 201));
       },
       error => {
         throw new HttpException(error.message ?? '', 400);
@@ -93,7 +93,7 @@ class AuthenticationController implements IController {
               value.isTwoFactorAuthenticationEnabled,
           });
         }
-        return response.status(200).json(new Ok(value.user));
+        return response.send(new Ok(value.user));
       },
       error => {
         throw new HttpException(error.message ?? '', 400);
@@ -115,14 +115,12 @@ class AuthenticationController implements IController {
     _next: express.NextFunction
   ) => {
     const user = request.user;
-    if (user === undefined)
-      return response.status(401).send(new NotAuthorised());
+    if (user === undefined) return response.send(new NotAuthorised());
     const otpauthUrl =
       await this.authService.generateTwoFactorAuthenticationCode(user);
 
     // TODO: Fix this later
-    if (otpauthUrl === undefined)
-      return response.status(401).send(new NotAuthorised());
+    if (otpauthUrl === undefined) return response.send(new NotAuthorised());
     await this.authService.respondWithQRCode(otpauthUrl, response);
   };
 
