@@ -24,6 +24,7 @@ describe('AuthenticationController', () => {
     beforeEach(() => {
       userData = {
         email: 'john@smith.com',
+        name: 'John Smith',
         password: 'strongPassword123',
       };
 

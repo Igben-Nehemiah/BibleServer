@@ -27,6 +27,7 @@ describe('AuthenticationService', () => {
   describe('When registering a user with an existing email address', () => {
     const createUserDto: CreateUserDto = {
       email: 'test@test.com',
+      name: 'Testing Test',
       password: 'testing',
     };
     it('should return a failed result', async () => {
