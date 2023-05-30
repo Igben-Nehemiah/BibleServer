@@ -5,7 +5,7 @@ import {
   type DataStoredInToken,
   type RequestWithUser,
 } from '../modules/authentication/interfaces';
-import userModel from '../modules/authentication/models/user.model';
+import UserModel from '../modules/authentication/models/user.model';
 import {
   AuthenticationTokenMissingException,
   WrongAuthenticationTokenException,
@@ -26,7 +26,7 @@ export function authenticationMiddleware(omitSecondFactor = false) {
           secret
         ) as DataStoredInToken;
         const { _id: id, isSecondFactorAuthenticated } = verificationResponse;
-        const user = await userModel.findById(id);
+        const user = await UserModel.findById(id);
         if (user !== null) {
           if (
             userHasSecondFactorAuthEnabledAndIsNotSecondFactorAuthenticated(
