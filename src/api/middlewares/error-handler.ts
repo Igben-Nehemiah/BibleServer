@@ -11,7 +11,9 @@ const errorHandlerMiddleware = (
   _next: NextFunction
 ) => {
   if (err instanceof HttpException) {
-    res.status(err.statusCode).send(new NotOk(err.statusCode, err.message));
+    return res
+      .status(err.statusCode)
+      .send(new NotOk(err.statusCode, err.message));
   }
   res.status(500).send(new NotOk(500));
 };
