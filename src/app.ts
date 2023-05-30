@@ -1,8 +1,9 @@
 import express from 'express';
 import * as bodyParser from 'body-parser';
 import type IController from './api/common/controller/controller.interface';
-import { errorHandlerMiddleware } from './api/middlewares';
+import { errorHandlerMiddleware, responseInterceptor } from './api/middlewares';
 import cookieParser from 'cookie-parser';
+require('express-async-errors');
 
 class App {
   public app: express.Application;
@@ -26,6 +27,7 @@ class App {
   private initialiseMiddlewares() {
     this.app.use(bodyParser.json());
     this.app.use(cookieParser());
+    this.app.use(responseInterceptor);
   }
 
   private initialiseControllers(controllers: IController[]) {
