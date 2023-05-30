@@ -1,21 +1,18 @@
-// import connectDB from './src/config/database'
-// import Book from './src/api/v1/models/Book'
-// require('dotenv').config()
+import BookModel from './src/api/modules/books/models/book.model';
+const kjv = require('./en_kjv.json');
 
-// const kjv = require('./en_kjv.json')
+export const populateBooks = async () => {
+  try {
+    if (!process.env.MONGO_URI) throw new Error();
+    await BookModel.deleteMany();
+    const books = await BookModel.exists({});
 
-// const start = async () => {
-//   try {
-//     if (!process.env.MONGO_URI) throw new Error()
-//     await connectDB(process.env.MONGO_URI)
-//     await Book.deleteMany()
-//     await Book.create(kjv)
-//     console.log('Success!!!')
-//     process.exit(0)
-//   } catch (error: unknown) {
-//     console.log(error)
-//     process.exit(1)
-//   }
-// }
+    if (books == null) await BookModel.create(kjv);
 
-// start()
+    console.log('Books populated');
+    process.exit(0);
+  } catch (error: unknown) {
+    console.log(error);
+    process.exit(1);
+  }
+};
