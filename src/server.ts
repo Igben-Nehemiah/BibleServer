@@ -1,4 +1,3 @@
-import { populateBooks } from '../populate';
 import AuthenticationController from './api/modules/authentication/authentication.controller';
 import AuthenticationService from './api/modules/authentication/authentication.service';
 import UserModel from './api/modules/authentication/models/user.model';

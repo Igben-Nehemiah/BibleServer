@@ -8,7 +8,8 @@
     "strict": true,
     "skipLibCheck": true,
     "watch": false,
-    "outDir": "dist"
+    "outDir": "dist",
+    "resolveJsonModule": true
   },
   "include": ["./**/*.ts"]
 }

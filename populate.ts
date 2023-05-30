@@ -1,5 +1,5 @@
 import BookModel from './src/api/modules/books/models/book.model';
-const kjv = require('./en_kjv.json');
+import * as kjv from './en_kjv.json';
 
 export const populateBooks = async () => {
   try {
