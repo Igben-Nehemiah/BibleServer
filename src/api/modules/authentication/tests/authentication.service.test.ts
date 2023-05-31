@@ -22,6 +22,33 @@ describe('AuthenticationService', () => {
   let authenticationService: AuthenticationService;
   beforeEach(() => {
     authenticationService = new AuthenticationService(authRepository);
+    process.env.SALT_ROUNDS = '10';
+    process.env.JWT_SECRET = 'secret';
+  });
+
+  describe('When registering a user with a valid email address', () => {
+    const createUserDto: CreateUserDto = {
+      email: 'test30@test.com',
+      name: 'Testing Test',
+      password: 'testing',
+    };
+
+    beforeEach(() => {
+      authRepository.findUserByEmail = jest.fn().mockResolvedValue(null);
+      authRepository.add = jest.fn().mockResolvedValue({
+        name: createUserDto.name,
+        email: createUserDto.email,
+        password: createUserDto.password,
+        _id: '61505d4e7a7e6c001f2ce301',
+      });
+    });
+
+    it('should return a user with the password field stripped out', async () => {
+      const result = await authenticationService.registerUser(createUserDto);
+
+      expect(result.isSuccessful).toBeTruthy();
+      expect(result.value.user.password).toBeUndefined();
+    });
   });
 
   describe('When registering a user with an existing email address', () => {
@@ -30,6 +57,16 @@ describe('AuthenticationService', () => {
       name: 'Testing Test',
       password: 'testing',
     };
+
+    beforeEach(() => {
+      authRepository.findUserByEmail = jest.fn().mockResolvedValue(null);
+      authRepository.findUserByEmail = jest.fn().mockResolvedValue({
+        _id: '61505d4e7a7e6c001f2ce301',
+        name: 'Test Test',
+        email: 'test@test.com',
+      });
+    });
+
     it('should return a failed result', async () => {
       const result = await authenticationService.registerUser(createUserDto);
 

@@ -8,7 +8,7 @@ export class Response<T> {
     public readonly error: string | null = null,
     public readonly message: string | null = null
   ) {
-    this.isSuccessful = code < 400 && code >= 100 && error != null;
+    this.isSuccessful = code < 400 && code >= 100 && error === null;
     this.isNotSuccessful = !this.isSuccessful;
   }
 }
