@@ -35,7 +35,7 @@ class AuthenticationController implements IController {
     this.router.post(`${this.path}/logout`, this.logout);
     this.router.post(
       `${this.path}/2fa/generate`,
-      authenticationMiddleware,
+      authenticationMiddleware(),
       this.generateTwoFactorAuthenticationCode
     );
     this.router.post(

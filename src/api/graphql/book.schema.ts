@@ -6,7 +6,7 @@ import {
   GraphQLSchema,
   GraphQLString,
 } from 'graphql';
-import { getBookByName } from './books.data';
+// import { getBookByName } from './books.data';
 
 const BookType: GraphQLInterfaceType = new GraphQLInterfaceType({
   name: 'Book',
@@ -48,3 +48,6 @@ export const BookSchema: GraphQLSchema = new GraphQLSchema({
   query: queryType,
   types: [BookType],
 });
+function getBookByName(name: any) {
+  throw new Error('Function not implemented.');
+}
