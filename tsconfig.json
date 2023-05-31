@@ -9,7 +9,8 @@
     "skipLibCheck": true,
     "watch": false,
     "outDir": "dist",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "sourceMap": true
   },
   "include": ["./**/*.ts"]
 }
