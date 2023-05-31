@@ -25,21 +25,18 @@ class AuthenticationController implements IController {
     this.router.post(
       `${this.path}/login`,
       validationMiddleware(LoginDto),
-      this.logIn as express.RequestHandler
+      this.logIn
     );
     this.router.post(
       `${this.path}/signup`,
       validationMiddleware(CreateUserDto),
-      this.registerUser as express.RequestHandler
+      this.registerUser
     );
-    this.router.post(
-      `${this.path}/logout`,
-      this.logout as express.RequestHandler
-    );
+    this.router.post(`${this.path}/logout`, this.logout);
     this.router.post(
       `${this.path}/2fa/generate`,
       authenticationMiddleware,
-      this.generateTwoFactorAuthenticationCode as express.RequestHandler
+      this.generateTwoFactorAuthenticationCode
     );
     this.router.post(
       `${this.path}/2fa/turn-on`,
@@ -107,6 +104,7 @@ class AuthenticationController implements IController {
     _next: express.NextFunction
   ) => {
     response.setHeader('Set-Cookie', ['Authorization=;Max-age=0']);
+    response.send(new Ok());
   };
 
   private readonly generateTwoFactorAuthenticationCode = async (
@@ -115,6 +113,7 @@ class AuthenticationController implements IController {
     _next: express.NextFunction
   ) => {
     const user = request.user;
+    console.log({ user });
     if (user === undefined) return response.send(new NotAuthorised());
     const otpauthUrl =
       await this.authService.generateTwoFactorAuthenticationCode(user);
