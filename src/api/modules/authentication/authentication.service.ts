@@ -52,13 +52,15 @@ class AuthenticationService {
         parseInt(saltRounds)
       );
 
-      const newUser = await this.authRepository.add({
+      const newUser: User = await this.authRepository.add({
         ...createUserDto,
         password: hashedPassword,
       });
 
+      newUser.password = undefined;
       delete newUser.password;
       const tokenData = this.createToken(newUser);
+
       return new Result({
         cookie: this.createCookie(tokenData),
         user: newUser,
