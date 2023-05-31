@@ -80,6 +80,10 @@ class AuthenticationService {
 
     if (user.password === undefined)
       throw new Error('User password is undefined');
+
+    user.password = undefined;
+    delete user.password;
+
     const isPasswordMatching = await bcrypt.compare(
       loginDto.password,
       user.password
