@@ -81,9 +81,6 @@ class AuthenticationService {
     if (user.password === undefined)
       throw new Error('User password is undefined');
 
-    user.password = undefined;
-    delete user.password;
-
     const isPasswordMatching = await bcrypt.compare(
       loginDto.password,
       user.password
@@ -92,6 +89,7 @@ class AuthenticationService {
     if (!isPasswordMatching)
       return new Result<ExtendedCookieUser>(new WrongCredentialsException());
 
+    user.password = undefined;
     delete user.password;
     delete user.twoFactorAuthenticationCode;
     const tokenData = this.createToken(user);
