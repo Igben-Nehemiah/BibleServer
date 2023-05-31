@@ -77,7 +77,7 @@ class AuthenticationService {
       return new Result<ExtendedCookieUser>(new WrongCredentialsException());
 
     if (user.password === undefined)
-      throw new Error('User password is undefined'); //TODO: handle this later
+      throw new Error('User password is undefined');
     const isPasswordMatching = await bcrypt.compare(
       loginDto.password,
       user.password
