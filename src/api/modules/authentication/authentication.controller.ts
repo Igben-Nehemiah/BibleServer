@@ -113,7 +113,6 @@ class AuthenticationController implements IController {
     _next: express.NextFunction
   ) => {
     const user = request.user;
-    console.log({ user });
     if (user === undefined) return response.send(new NotAuthorised());
     const otpauthUrl =
       await this.authService.generateTwoFactorAuthenticationCode(user);
@@ -156,9 +155,9 @@ class AuthenticationController implements IController {
     const { twoFactorAuthenticationCode } = request.body;
     const user = request.user;
 
-    if (user === undefined) throw new Error('User not logged in');
+    if (user === undefined) throw new HttpException('User not logged in', 400);
 
-    const result = await this.authService.secondFactorAuthentication(
+    const result = await this.authService.secondFactorAuthenticate(
       user,
       twoFactorAuthenticationCode
     );
