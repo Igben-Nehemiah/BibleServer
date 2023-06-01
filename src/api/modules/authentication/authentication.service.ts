@@ -17,6 +17,7 @@ import {
   WrongCredentialsException,
 } from './exceptions';
 import { CreateUserDto, LoginDto } from './dtos';
+import { HttpException } from '../../common/errors/custom-error';
 
 interface CookieUser {
   cookie: string;
@@ -57,8 +58,8 @@ class AuthenticationService {
         password: hashedPassword,
       });
 
-      newUser.password = undefined;
-      delete newUser.password;
+      this.removeSensitiveUserInfo(newUser);
+
       const tokenData = this.createToken(newUser);
 
       return new Result({
@@ -89,9 +90,8 @@ class AuthenticationService {
     if (!isPasswordMatching)
       return new Result<ExtendedCookieUser>(new WrongCredentialsException());
 
-    user.password = undefined;
-    delete user.password;
-    delete user.twoFactorAuthenticationCode;
+    this.removeSensitiveUserInfo(user);
+
     const tokenData = this.createToken(user);
 
     return new Result<ExtendedCookieUser>({
@@ -102,12 +102,97 @@ class AuthenticationService {
     });
   };
 
+  public generateTwoFactorAuthenticationCode = async (user: User) => {
+    const { otpauthUrl, base32 } = this.getTwoFactorAuthenticationCode();
+
+    if (user._id === undefined)
+      throw new HttpException('User Id cannot be undefined', 400);
+
+    await this.authRepository.findByIdAndUpdate(user._id, {
+      twoFactorAuthenticationCode: base32,
+    });
+    return otpauthUrl;
+  };
+
+  public async respondWithQRCode(data: string, response: Response) {
+    await QRCode.toFileStream(response, data);
+  }
+
+  public turnOnTwoFactorAuthentication = async (
+    user: User,
+    twoFactorAuthenticationCode: string
+  ) => {
+    if (user === undefined) throw new HttpException('User not logged in', 401);
+
+    const isCodeValid = this.verifyTwoFactorAuthenticationCode(
+      twoFactorAuthenticationCode,
+      user
+    );
+
+    if (user._id === undefined)
+      throw new HttpException('User not logged in', 401); //TODO: Correct errors
+
+    if (isCodeValid) {
+      await this.authRepository.findByIdAndUpdate(user._id, {
+        isTwoFactorAuthenticationEnabled: true,
+      });
+      return new Result<number>(200);
+    } else {
+      return new Result<number>(new WrongAuthenticationTokenException());
+    }
+  };
+
+  public secondFactorAuthenticate = async (
+    user: User,
+    twoFactorAuthenticationCode: string
+  ) => {
+    const isCodeValid = this.verifyTwoFactorAuthenticationCode(
+      twoFactorAuthenticationCode,
+      user
+    );
+    if (isCodeValid) {
+      const tokenData = this.createToken(user, true);
+
+      this.removeSensitiveUserInfo(user);
+
+      return new Result<CookieUser>({
+        cookie: this.createCookie(tokenData),
+        user,
+      });
+    } else {
+      return new Result<CookieUser>(new WrongAuthenticationTokenException());
+    }
+  };
+
+  private createCookie(tokenData: TokenData): string {
+    return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`;
+  }
+
+  private verifyTwoFactorAuthenticationCode(
+    twoFactorAuthenticationCode: string,
+    user: User
+  ) {
+    if (user.twoFactorAuthenticationCode === undefined) {
+      throw new HttpException('User authentication code cannot be empty', 401);
+    }
+
+    return speakeasy.totp.verify({
+      secret: user.twoFactorAuthenticationCode,
+      encoding: 'base32',
+      token: twoFactorAuthenticationCode,
+      step: 60,
+      window: 1,
+    });
+  }
+
   private createToken(
     user: User,
     isSecondFactorAuthenticated = false
   ): TokenData {
-    const expiresIn = 3600; // TODO: Read from environment
-    // const algorithm = process.env.JWT_ALGORITHM!
+    if (process.env.JWT_EXPIRATION_IN_SECONDS === undefined)
+      throw new Error('JWT expiration time not defined');
+
+    const expiresIn = parseInt(process.env.JWT_EXPIRATION_IN_SECONDS);
     const secret = process.env.JWT_SECRET;
 
     if (secret === undefined) throw new Error('No token secret provided');
@@ -127,91 +212,21 @@ class AuthenticationService {
     };
   }
 
-  public createCookie(tokenData: TokenData): string {
-    return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`;
+  private removeSensitiveUserInfo(user: User) {
+    user.password = undefined;
+    user.twoFactorAuthenticationCode = undefined;
   }
 
-  getTwoFactorAuthenticationCode() {
+  private getTwoFactorAuthenticationCode() {
     const secretCode = speakeasy.generateSecret({
       name: process.env.TWO_FACTOR_AUTHENTICATION_APP_NAME,
     });
+
     return {
       otpauthUrl: secretCode.otpauth_url,
       base32: secretCode.base32,
     };
   }
-
-  async respondWithQRCode(data: string, response: Response) {
-    await QRCode.toFileStream(response, data);
-  }
-
-  generateTwoFactorAuthenticationCode = async (user: User) => {
-    const { otpauthUrl, base32 } = this.getTwoFactorAuthenticationCode();
-
-    if (user._id === undefined) throw new Error('User Id cannot be undefined');
-    await this.authRepository.findByIdAndUpdate(user._id, {
-      twoFactorAuthenticationCode: base32,
-    });
-    return otpauthUrl;
-  };
-
-  private verifyTwoFactorAuthenticationCode(
-    twoFactorAuthenticationCode: string,
-    user: User
-  ) {
-    if (user.twoFactorAuthenticationCode === undefined)
-      throw new Error('Two factor authentication not set for this user');
-    return speakeasy.totp.verify({
-      secret: user.twoFactorAuthenticationCode,
-      encoding: 'base32',
-      token: twoFactorAuthenticationCode,
-    });
-  }
-
-  turnOnTwoFactorAuthentication = async (
-    user: User,
-    twoFactorAuthenticationCode: string
-  ) => {
-    if (user === undefined) throw new Error('User not logged in');
-
-    const isCodeValid = this.verifyTwoFactorAuthenticationCode(
-      twoFactorAuthenticationCode,
-      user
-    );
-
-    if (user._id === undefined) throw new Error('User not logged in'); //TODO: Correct errors
-
-    if (isCodeValid) {
-      await this.authRepository.findByIdAndUpdate(user._id, {
-        isTwoFactorAuthenticationEnabled: true,
-      });
-      return new Result<number>(200);
-    } else {
-      return new Result<number>(new WrongAuthenticationTokenException());
-    }
-  };
-
-  secondFactorAuthentication = async (
-    user: User,
-    twoFactorAuthenticationCode: string
-  ) => {
-    const isCodeValid = await this.verifyTwoFactorAuthenticationCode(
-      twoFactorAuthenticationCode,
-      user
-    );
-    if (isCodeValid) {
-      const tokenData = this.createToken(user, true);
-
-      delete user.password;
-      delete user.twoFactorAuthenticationCode;
-      return new Result<CookieUser>({
-        cookie: this.createCookie(tokenData),
-        user,
-      });
-    } else {
-      return new Result<CookieUser>(new WrongAuthenticationTokenException());
-    }
-  };
 }
 
 export default AuthenticationService;
