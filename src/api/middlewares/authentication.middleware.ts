@@ -1,7 +1,6 @@
 import { type NextFunction, type Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 import {
-  type User,
   type DataStoredInToken,
   type RequestWithUser,
 } from '../modules/authentication/interfaces';
