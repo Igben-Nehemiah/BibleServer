@@ -165,9 +165,11 @@ class AuthenticationController implements IController {
     result.match(
       value => {
         response.setHeader('Set-Cookie', [value.cookie]);
-        response.send({
-          ...value.user,
-        });
+        response.send(
+          new Ok({
+            ...value.user,
+          })
+        );
       },
       err => {
         next(err);
