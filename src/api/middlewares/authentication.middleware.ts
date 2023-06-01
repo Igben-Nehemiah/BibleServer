@@ -28,13 +28,12 @@ export function authenticationMiddleware(omitSecondFactor = false) {
         const { _id: id, isSecondFactorAuthenticated } = verificationResponse;
         const user = await UserModel.findById(id);
         if (user !== null) {
-          if (
-            userHasSecondFactorAuthEnabledAndIsNotSecondFactorAuthenticated(
-              omitSecondFactor,
-              user,
-              isSecondFactorAuthenticated
-            )
-          ) {
+          const userHasSecondFactorAuthEnabledAndIsNotSecondFactorAuthenticated =
+            !omitSecondFactor &&
+            user.isTwoFactorAuthenticationEnabled !== undefined &&
+            user.isTwoFactorAuthenticationEnabled &&
+            !isSecondFactorAuthenticated;
+          if (userHasSecondFactorAuthEnabledAndIsNotSecondFactorAuthenticated) {
             next(new WrongAuthenticationTokenException());
           } else {
             request.user = user;
@@ -50,17 +49,4 @@ export function authenticationMiddleware(omitSecondFactor = false) {
       next(new AuthenticationTokenMissingException());
     }
   };
-}
-
-function userHasSecondFactorAuthEnabledAndIsNotSecondFactorAuthenticated(
-  omitSecondFactor: boolean,
-  user: User,
-  isSecondFactorAuthenticated: boolean
-) {
-  return (
-    !omitSecondFactor &&
-    user.isTwoFactorAuthenticationEnabled !== undefined &&
-    user.isTwoFactorAuthenticationEnabled &&
-    !isSecondFactorAuthenticated
-  );
 }
