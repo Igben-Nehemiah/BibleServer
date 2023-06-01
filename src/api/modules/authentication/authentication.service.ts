@@ -180,8 +180,7 @@ class AuthenticationService {
       secret: user.twoFactorAuthenticationCode,
       encoding: 'base32',
       token: twoFactorAuthenticationCode,
-      step: 60,
-      window: 1,
+      window: 6,
     });
   }
 
