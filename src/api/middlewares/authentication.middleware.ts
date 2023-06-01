@@ -1,6 +1,7 @@
 import { type NextFunction, type Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 import {
+  User,
   type DataStoredInToken,
   type RequestWithUser,
 } from '../modules/authentication/interfaces';
@@ -25,13 +26,14 @@ export function authenticationMiddleware(omitSecondFactor = false) {
           secret
         ) as DataStoredInToken;
         const { _id: id, isSecondFactorAuthenticated } = verificationResponse;
-        const user = await UserModel.findById(id);
+        const user: User = (await UserModel.findById(id))?.toObject() as User;
         if (user !== null) {
           const userHasSecondFactorAuthEnabledAndIsNotSecondFactorAuthenticated =
             !omitSecondFactor &&
             user.isTwoFactorAuthenticationEnabled !== undefined &&
             user.isTwoFactorAuthenticationEnabled &&
             !isSecondFactorAuthenticated;
+
           if (userHasSecondFactorAuthEnabledAndIsNotSecondFactorAuthenticated) {
             next(new WrongAuthenticationTokenException());
           } else {
