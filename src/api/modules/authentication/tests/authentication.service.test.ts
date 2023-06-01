@@ -24,6 +24,7 @@ describe('AuthenticationService', () => {
     authenticationService = new AuthenticationService(authRepository);
     process.env.SALT_ROUNDS = '10';
     process.env.JWT_SECRET = 'secret';
+    process.env.JWT_EXPIRATION_IN_SECONDS = '36000';
   });
 
   describe('When registering a user with a valid email address', () => {

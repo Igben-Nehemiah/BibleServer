@@ -30,6 +30,7 @@ describe('AuthenticationController', () => {
 
       process.env.JWT_SECRET = 'jwt_secret';
       process.env.SALT_ROUNDS = '10';
+      process.env.JWT_EXPIRATION_IN_SECONDS = '36000';
 
       authRepository.findUserByEmail = jest.fn().mockReturnValue(null);
 
