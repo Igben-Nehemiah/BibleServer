@@ -13,17 +13,16 @@ class BooksController extends ControllerBase {
   }
 
   public initiliseRoutes() {
-    this.router.get(
-      this.path,
-      this.getAllBooks.bind(this) as express.RequestHandler
-    );
+    this.router.get(this.path, this.getAllBooks.bind(this));
   }
 
   private readonly getAllBooks = async (
-    _request: express.Request,
+    request: express.Request,
     response: express.Response
   ) => {
-    const result = await this.booksService.getAllBooks();
+    const { name }: { name?: string } = request.query;
+
+    const result = await this.booksService.getAllBooks(name);
 
     if (result.isSuccessful) {
       return response.send({ books: result.value });
