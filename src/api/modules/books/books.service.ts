@@ -5,9 +5,9 @@ import type BooksRepository from './repositories/books.repository';
 class BooksService {
   constructor(private readonly booksRepository: BooksRepository) {}
 
-  async getAllBooks(): Promise<Result<Book[]>> {
+  async getAllBooks(name?: string): Promise<Result<Book[]>> {
     try {
-      const books = await this.booksRepository.getAll();
+      const books = await this.booksRepository.getAllBooks(name);
       return await Promise.resolve(new Result(books));
     } catch (e: unknown) {
       return await Promise.resolve(
