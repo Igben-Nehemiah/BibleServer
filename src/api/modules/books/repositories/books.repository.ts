@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import BaseRepository from '../../../common/repositories/base.repository';
+import { BookResponse } from '../dtos';
 import {
   type Book,
   type IBookRepository as IBooksRepository,
@@ -16,8 +17,17 @@ class BooksRepository extends BaseRepository<Book> implements IBooksRepository {
     name: string,
     chapterNumber: number = 1,
     verseNumber?: number
-  ): Promise<string | string[]> {
-    const book: Book = (await this.model.findOne({ name })) as Book;
+  ): Promise<BookResponse> {
+    const queryObject: {
+      name?: {
+        $regex: any;
+        $options: string;
+      };
+    } = {};
+
+    queryObject.name = { $regex: name, $options: 'i' };
+
+    const book: Book = (await this.model.findOne(queryObject)) as Book;
 
     if (book == null) throw new Error(`${name} not found!`);
 
@@ -28,16 +38,32 @@ class BooksRepository extends BaseRepository<Book> implements IBooksRepository {
 
     const chapter = book.chapters[chapterNumber - 1];
 
-    const numberOfChapterVerses = chapter[chapterNumber - 1].length;
+    const totalNumberOfVerses = chapter[chapterNumber - 1].length;
 
     if (verseNumber === undefined) {
-      return chapter;
+      return {
+        abbreviation: book.abbrev,
+        chapter: chapterNumber,
+        totalNumberOfVerses: totalNumberOfVerses,
+        book: book.name,
+        verse: 'all',
+        data: chapter,
+        totalNumberOfChapters,
+      };
     }
 
-    if (verseNumber - 1 < 0 || verseNumber > numberOfChapterVerses)
+    if (verseNumber - 1 < 0 || verseNumber > totalNumberOfVerses)
       throw new Error('Invalid verse of chapter');
 
-    return chapter[verseNumber - 1];
+    return {
+      abbreviation: book.abbrev,
+      chapter: chapterNumber,
+      book: book.name,
+      verse: verseNumber,
+      data: chapter[verseNumber - 1],
+      totalNumberOfVerses,
+      totalNumberOfChapters,
+    };
   }
 
   // async getAllBooks(

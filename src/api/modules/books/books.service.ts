@@ -1,6 +1,6 @@
 import { Result } from '@nehemy/result-monad';
-import { type Book } from './interfaces';
 import type BooksRepository from './repositories/books.repository';
+import { BookResponse } from './dtos';
 
 class BooksService {
   constructor(private readonly booksRepository: BooksRepository) {}
@@ -9,7 +9,7 @@ class BooksService {
     name: string,
     chapterNumber: number,
     verseNumber?: number
-  ): Promise<Result<string | string[]>> {
+  ): Promise<Result<BookResponse>> {
     try {
       const verses = await this.booksRepository.getBook(
         name,
@@ -18,7 +18,7 @@ class BooksService {
       );
       return new Result(verses);
     } catch (e: unknown) {
-      return new Result<string | string[]>(
+      return new Result<BookResponse>(
         new Error((e as Error).message ?? 'Failed to get book')
       );
     }
