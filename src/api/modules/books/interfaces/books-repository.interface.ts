@@ -1,5 +1,5 @@
 import { type Book } from './book.interface';
 
 export interface IBookRepository {
-  getBookByName: (name: string) => Promise<Book>;
+  getBook: (name: string) => Promise<string | string[]>;
 }
