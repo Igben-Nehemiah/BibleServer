@@ -5,23 +5,22 @@ import type BooksRepository from './repositories/books.repository';
 class BooksService {
   constructor(private readonly booksRepository: BooksRepository) {}
 
-  async getAllBooks(name?: string): Promise<Result<Book[]>> {
+  async getBook(
+    name: string,
+    chapterNumber: number,
+    verseNumber?: number
+  ): Promise<Result<string | string[]>> {
     try {
-      const books = await this.booksRepository.getAllBooks(name);
-      return await Promise.resolve(new Result(books));
-    } catch (e: unknown) {
-      return await Promise.resolve(
-        new Result<Book[]>(new Error('Failed to get books!'))
+      const verses = await this.booksRepository.getBook(
+        name,
+        chapterNumber,
+        verseNumber
       );
-    }
-  }
-
-  async getBookByName(name: string): Promise<Result<Book>> {
-    try {
-      const book = await this.booksRepository.getBookByName(name);
-      return new Result(book);
+      return new Result(verses);
     } catch (e: unknown) {
-      return new Result<Book>(new Error('Failed to get book'));
+      return new Result<string | string[]>(
+        new Error((e as Error).message ?? 'Failed to get book')
+      );
     }
   }
 }
