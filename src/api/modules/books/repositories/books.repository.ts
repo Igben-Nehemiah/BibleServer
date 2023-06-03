@@ -12,83 +12,103 @@ class BooksRepository extends BaseRepository<Book> implements IBooksRepository {
     super(model);
   }
 
-  async getBookByName(name: string): Promise<Book> {
-    const book = await this.model.findOne({ name });
+  async getBook(
+    name: string,
+    chapterNumber: number = 1,
+    verseNumber?: number
+  ): Promise<string | string[]> {
+    const book: Book = (await this.model.findOne({ name })) as Book;
 
     if (book == null) throw new Error(`${name} not found!`);
 
-    return await Promise.resolve(book as Book);
-  }
+    const totalNumberOfChapters = book.chapters.length;
 
-  async getAllBooks(
-    name?: string,
-    chapter: string = '1',
-    verse: string = '1'
-  ): Promise<Book[]> {
-    const queryObject: {
-      name?: {
-        $regex: any;
-        $options: string;
-      };
-    } = {};
+    if (chapterNumber - 1 < 0 || chapterNumber > totalNumberOfChapters)
+      throw new Error('Invalid book chapter');
 
-    if (name !== undefined) {
-      queryObject.name = { $regex: name, $options: 'i' };
+    const chapter = book.chapters[chapterNumber - 1];
+
+    const numberOfChapterVerses = chapter[chapterNumber - 1].length;
+
+    if (verseNumber === undefined) {
+      return chapter;
     }
 
-    const pipeline = [
-      // Match the book by name
-      {
-        $match: { name: name },
-      },
-      //Add a field with the total number of chapters
-      {
-        $addFields: {
-          totalChapters: { $size: '$chapters' },
-        },
-      },
-      //Filter the chapters based on the provided chapter number
-      {
-        $project: {
-          name: 1,
-          totalChapters: 1,
-          selectedChapter: {
-            $arrayElemAt: [
-              '$chapters',
-              { $subtract: [parseInt(chapter, 10) - 1, 1] },
-            ],
-          },
-        },
-      },
-      //Unwind the selected chapter array
-      { $unwind: '$selectedChapter' },
-      // Add a field with the total number of verses in the selected chapter
-      {
-        $addFields: {
-          totalVerses: { $size: '$selectedChapter' },
-        },
-      },
-      // Filter the verses based on the provided verse number
-      {
-        $project: {
-          name: 1,
-          totalChapters: 1,
-          totalVerses: 1,
-          selectedVerse: {
-            $arrayElemAt: [
-              '$selectedChapter',
-              { $subtract: [parseInt(verse, 10) - 1, 1] },
-            ],
-          },
-        },
-      },
-    ];
+    if (verseNumber - 1 < 0 || verseNumber > numberOfChapterVerses)
+      throw new Error('Invalid verse of chapter');
 
-    // const something = await BookModel.aggregate(pipeline);
-
-    const books = await this.model.find(queryObject);
-    return books as Book[];
+    return chapter[verseNumber - 1];
   }
+
+  // async getAllBooks(
+  //   name?: string,
+  //   chapter: string = '1',
+  //   verse: string = '1'
+  // ): Promise<Book[]> {
+  //   const queryObject: {
+  //     name?: {
+  //       $regex: any;
+  //       $options: string;
+  //     };
+  //   } = {};
+
+  //   if (name !== undefined) {
+  //     queryObject.name = { $regex: name, $options: 'i' };
+  //   }
+
+  //   const pipeline = [
+  //     // Match the book by name
+  //     {
+  //       $match: { name: name },
+  //     },
+  //     //Add a field with the total number of chapters
+  //     {
+  //       $addFields: {
+  //         totalChapters: { $size: '$chapters' },
+  //       },
+  //     },
+  //     //Filter the chapters based on the provided chapter number
+  //     {
+  //       $project: {
+  //         name: 1,
+  //         totalChapters: 1,
+  //         selectedChapter: {
+  //           $arrayElemAt: [
+  //             '$chapters',
+  //             { $subtract: [parseInt(chapter, 10) - 1, 1] },
+  //           ],
+  //         },
+  //       },
+  //     },
+  //     //Unwind the selected chapter array
+  //     { $unwind: '$selectedChapter' },
+  //     // Add a field with the total number of verses in the selected chapter
+  //     {
+  //       $addFields: {
+  //         totalVerses: { $size: '$selectedChapter' },
+  //       },
+  //     },
+  //     // Filter the verses based on the provided verse number
+  //     {
+  //       $project: {
+  //         name: 1,
+  //         totalChapters: 1,
+  //         totalVerses: 1,
+  //         selectedVerse: {
+  //           $arrayElemAt: [
+  //             '$selectedChapter',
+  //             { $subtract: [parseInt(verse, 10) - 1, 1] },
+  //           ],
+  //         },
+  //       },
+  //     },
+  //   ];
+
+  //   // const something = await BookModel.aggregate(pipeline);
+
+  //   const books = await this.model.find(queryObject);
+  //   return books as Book[];
+  // }
 }
 
 export default BooksRepository;
