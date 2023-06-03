@@ -15,7 +15,7 @@ class BooksRepository extends BaseRepository<Book> implements IBooksRepository {
 
   async getBook(
     name: string,
-    chapterNumber: number = 1,
+    chapterNumber = 1,
     verseNumber?: number
   ): Promise<BookResponse> {
     const queryObject: {
