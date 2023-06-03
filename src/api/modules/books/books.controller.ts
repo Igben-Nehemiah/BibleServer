@@ -4,6 +4,8 @@ import type * as express from 'express';
 import ControllerBase from '../../common/controller/base.controller';
 import type BooksService from './books.service';
 import BookNotFoundException from './exceptions/book-not-found.exception';
+import { BadRequest, Ok } from '../../common/responses';
+import { HttpException } from '../../common/errors/custom-error';
 
 class BooksController extends ControllerBase {
   constructor(private readonly booksService: BooksService) {
@@ -13,33 +15,34 @@ class BooksController extends ControllerBase {
   }
 
   public initiliseRoutes() {
-    this.router.get(this.path, this.getAllBooks.bind(this));
+    this.router.get(this.path, this.getBook);
   }
-
-  private readonly getAllBooks = async (
-    request: express.Request,
-    response: express.Response
-  ) => {
-    const { name }: { name?: string } = request.query;
-
-    const result = await this.booksService.getAllBooks(name);
-
-    if (result.isSuccessful) {
-      return response.send({ books: result.value });
-    }
-    response.send('');
-  };
 
   private readonly getBook = async (
     request: express.Request,
-    _response: express.Response
+    response: express.Response
   ) => {
-    const { name }: { name?: string } = request.query;
+    const {
+      name,
+      chapter,
+      verse,
+    }: { name?: string; chapter?: number; verse?: number } = request.query;
 
     if (name === undefined || name === '')
-      throw new Error('Book name cannot be empty');
+      throw new BadRequest('Book name cannot be empty');
 
-    const result = await this.booksService.getBookByName(name);
+    if (chapter === undefined) throw new BadRequest('Specify a chapter');
+
+    const result = await this.booksService.getBook(name, chapter, verse);
+
+    result.match(
+      value => {
+        response.send(new Ok(value));
+      },
+      err => {
+        throw new HttpException(err.message, 401);
+      }
+    );
 
     return result.isSuccessful ? result : new BookNotFoundException(name);
   };
