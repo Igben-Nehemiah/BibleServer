@@ -6,11 +6,16 @@ import {
   GraphQLSchema,
   GraphQLString,
 } from 'graphql';
+import { getBookByName } from './books.data';
 
-const BookType: GraphQLInterfaceType = new GraphQLInterfaceType({
+const bookType: GraphQLInterfaceType = new GraphQLInterfaceType({
   name: 'Book',
   description: 'A book of the bible',
   fields: () => ({
+    id: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The id of the human.',
+    },
     name: {
       type: new GraphQLNonNull(GraphQLString),
       description: 'The name of the book',
@@ -23,13 +28,16 @@ const BookType: GraphQLInterfaceType = new GraphQLInterfaceType({
       type: new GraphQLList(new GraphQLList(GraphQLString)),
     },
   }),
+  resolveType(book) {
+    return ''; // TODO: Correct later
+  },
 });
 
 const queryType = new GraphQLObjectType({
   name: 'Query',
   fields: () => ({
     book: {
-      type: BookType,
+      type: bookType,
       args: {
         name: {
           description: 'Name of book',
@@ -45,8 +53,5 @@ const queryType = new GraphQLObjectType({
 
 export const BookSchema: GraphQLSchema = new GraphQLSchema({
   query: queryType,
-  types: [BookType],
+  types: [bookType],
 });
-function getBookByName(name: any) {
-  throw new Error('Function not implemented.');
-}
