@@ -1,22 +1,30 @@
-import express from 'express';
 import { graphql } from 'graphql';
 import { BookSchema } from './book.schema';
-
-const app = express();
+import { Book } from './books.data';
 
 const source = `
-  query BookNameQuery {
-    book {
-      name
+  query GetBook($name: String!) {
+    book(name: $name) {
+      name,
+      chapters
     }
-  }`;
+  }
+`;
 
-graphql({ schema: BookSchema, source })
+const variables = {
+  name: 'Sample Book',
+};
+
+graphql({ schema: BookSchema, source, variableValues: variables })
   .then(result => {
-    console.log(result);
+    if (result.data == null || result.data == undefined) return;
+    const book = result.data.book as Book;
+    const chapters = book.chapters;
+
+    console.log('Book name: ', book.name);
+    console.log('Book:', book);
+    console.log('Chapters:', chapters);
   })
   .catch(e => {
     console.log(e);
   });
-
-console.log(app);
