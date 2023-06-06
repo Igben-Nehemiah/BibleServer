@@ -17,9 +17,12 @@
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
     "test": "jest"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "Bible",
+    "Bible Server"
+  ],
+  "author": "Igben O. Nehemiah",
+  "license": "MIT",
   "dependencies": {
     "@nehemy/result-monad": "^1.0.1",
     "@types/mongoose": "^5.11.97",
