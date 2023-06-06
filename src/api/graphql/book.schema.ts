@@ -6,7 +6,6 @@ import {
   GraphQLSchema,
   GraphQLString,
 } from 'graphql';
-// import { getBookByName } from './books.data';
 
 const BookType: GraphQLInterfaceType = new GraphQLInterfaceType({
   name: 'Book',
@@ -45,7 +44,7 @@ const queryType = new GraphQLObjectType({
 });
 
 export const BookSchema: GraphQLSchema = new GraphQLSchema({
-  query: queryType,
+  query: query..Type,
   types: [BookType],
 });
 function getBookByName(name: any) {
