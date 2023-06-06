@@ -44,7 +44,7 @@ const queryType = new GraphQLObjectType({
 });
 
 export const BookSchema: GraphQLSchema = new GraphQLSchema({
-  query: query..Type,
+  query: queryType,
   types: [BookType],
 });
 function getBookByName(name: any) {
