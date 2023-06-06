@@ -4,7 +4,12 @@ import { BookSchema } from './book.schema';
 
 const app = express();
 
-const source = '{ hello }';
+const source = `
+  query BookNameQuery {
+    book {
+      name
+    }
+  }`;
 
 graphql({ schema: BookSchema, source })
   .then(result => {
