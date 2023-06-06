@@ -1,20 +1,19 @@
 import {
-  GraphQLInterfaceType,
-  GraphQLList,
-  GraphQLNonNull,
-  GraphQLObjectType,
   GraphQLSchema,
+  GraphQLObjectType,
   GraphQLString,
+  GraphQLNonNull,
+  GraphQLList,
 } from 'graphql';
-import { getBookByName } from './books.data';
+import { getBookByName, getBookChapters } from './books.data';
 
-const bookType: GraphQLInterfaceType = new GraphQLInterfaceType({
+const bookType: GraphQLObjectType = new GraphQLObjectType({
   name: 'Book',
   description: 'A book of the bible',
   fields: () => ({
     id: {
       type: new GraphQLNonNull(GraphQLString),
-      description: 'The id of the human.',
+      description: 'The id of the book.',
     },
     name: {
       type: new GraphQLNonNull(GraphQLString),
@@ -22,15 +21,13 @@ const bookType: GraphQLInterfaceType = new GraphQLInterfaceType({
     },
     abbrev: {
       type: new GraphQLNonNull(GraphQLString),
-      description: 'The abbrevation of the book',
+      description: 'The abbreviation of the book',
     },
     chapters: {
       type: new GraphQLList(new GraphQLList(GraphQLString)),
+      resolve: book => getBookChapters(book),
     },
   }),
-  resolveType(book) {
-    return ''; // TODO: Correct later
-  },
 });
 
 const queryType = new GraphQLObjectType({
@@ -45,7 +42,7 @@ const queryType = new GraphQLObjectType({
         },
       },
       resolve: (_source, { name }) => {
-        getBookByName(name);
+        return getBookByName(name);
       },
     },
   }),
