@@ -5,7 +5,7 @@ import {
   GraphQLNonNull,
   GraphQLList,
 } from 'graphql';
-import { getBookByName, getBookChapters } from './books.data';
+import { getBookByName, getBookChapters } from '../../../../server';
 
 const bookType: GraphQLObjectType = new GraphQLObjectType({
   name: 'Book',
