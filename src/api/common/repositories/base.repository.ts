@@ -20,13 +20,13 @@ class BaseRepository<T> implements IBaseRepository<T> {
     return result as T[];
   }
 
-  async getById(id: string | number): Promise<T | null> {
+  async getById(id: string): Promise<T | null> {
     const result = await this.model.findById(id);
     return result as T;
   }
 
   async findByIdAndUpdate(
-    id: string | number,
+    id: string,
     updatedModel: Partial<T>
   ): Promise<T | null> {
     const result = await this.model.findByIdAndUpdate(
