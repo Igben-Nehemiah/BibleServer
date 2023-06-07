@@ -4,7 +4,7 @@ import { BookResponse } from './dtos';
 import { ExecutionResult, Source, graphql } from 'graphql';
 import { Maybe } from 'graphql/jsutils/Maybe';
 import { ObjMap } from 'graphql/jsutils/ObjMap';
-import { BookSchema } from '../../graphql/book.schema';
+import { BookSchema } from './graphql/book.schema';
 
 type GetBookWithGraphQlReturnType = ExecutionResult<
   ObjMap<unknown>,
