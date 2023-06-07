@@ -16,6 +16,7 @@ class BooksController extends ControllerBase {
 
   public initiliseRoutes() {
     this.router.get(this.path, this.getBook);
+    this.router.post(`${this.path}/graphql`, this.getBookWithGraphQl);
   }
 
   private readonly getBook = async (
@@ -45,6 +46,25 @@ class BooksController extends ControllerBase {
     );
 
     return result.isSuccessful ? result : new BookNotFoundException(name);
+  };
+
+  private readonly getBookWithGraphQl = async (
+    request: express.Request,
+    response: express.Response
+  ) => {
+    const variables = request.body.variables;
+    const query = request.body.query;
+
+    const result = await this.booksService.getBookWithGraphQl(query, variables);
+
+    result.match(
+      value => {
+        response.send(new Ok(value));
+      },
+      err => {
+        throw new HttpException(err.message, 401);
+      }
+    );
   };
 }
 
